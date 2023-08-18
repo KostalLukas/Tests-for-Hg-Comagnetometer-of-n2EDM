@@ -1,0 +1,2 @@
+Ch1 average calibration constant    = 2.763 ± 0.027 mW V^-1
+Ch2 average calibration constant    = 3.457 ± 0.011 mW V^-1
