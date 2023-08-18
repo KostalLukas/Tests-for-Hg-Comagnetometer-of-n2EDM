@@ -85,6 +85,8 @@ P = get_treshold(P, th)
 P_avg = get_avg(P)
 P_std = get_std(P)
 P_sem = get_sem(P)
+std_percent = P_std / P_avg * 100
+sem_percent = P_sem / P_avg * 100
 
 # print the numerical results
 file = f'Output/results_{th}.txt'
@@ -94,6 +96,8 @@ tprint(f'threshold P_th       = {th:.4g} uW')
 tprint(f'mean power P_avg     = {P_avg:.4g} uW')
 tprint(f'std power P_std      = {P_std:.4g} uW')
 tprint(f'SEM power P_sem      = {P_sem:.4g} uW')
+tprint(f'percentage std       = {std_percent:.4g} %')
+tprint(f'percentage SEM       = {sem_percent:.4g} %')
 
 # parameters for plotting SEM against threshold
 plt.figure(1)
