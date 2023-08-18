@@ -1,0 +1,6 @@
+threshold P_th       = 900 uW
+mean power P_avg     = 1098 uW
+std power P_std      = 59.24 uW
+SEM power P_sem      = 7.404 uW
+percentage std       = 5.396 %
+percentage SEM       = 0.6745 %
