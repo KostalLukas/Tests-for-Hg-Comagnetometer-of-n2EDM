@@ -1,0 +1,21 @@
+Modulation limits:
+Vmax       = 1 V
+Vmin       = -1 V
+
+Actual parameters:
+Iact       = 3086 mA
+Iact_max   = 3286 mA
+Iact_min   = 2886 mA
+
+Pact       = 1697 uW
+Pact_max   = 3286 uW
+Pact_min   = 2886 uW
+
+Setpoint Patameters:
+Iset       = 3165 mA
+Iset_max   = 3365 mA
+Iset_min   = 2965 mA
+
+Pset       = 2000 uW
+Pset_max   = 3365 uW
+Pset_min   = 2965 uW
