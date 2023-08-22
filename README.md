@@ -7,6 +7,8 @@ In this repository you can currently find:
   -  diode power ramp: D,A,R (might need better output naming)
 - Fiber Test
   - power meter (PM): D,A,R
+- Power Stabilisation
+  - modulation curves: D,A,R
 - S130VC Detector Test
   - sensitivity map: D,A,R
 
