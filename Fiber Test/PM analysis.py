@@ -68,6 +68,7 @@ Pfo_err = Pfo * err
 T_pmbs = Pfo / Pbsr / 2
 T_pmbs_err = T_pmbs * np.sqrt(2 * err**2)
 
+# find the average, expected uncertainty on average and peak to peak variation
 T_pmbs_avg = np.nanmean(T_pmbs)
 T_pmbs_avgerr = np.sqrt(np.nansum(T_pmbs_err**2)) / np.sqrt(np.sum(~np.isnan(T_pmbs_err)))
 T_pmbs_ptp = np.ptp(T_pmbs[~np.isnan(T_pmbs)])
@@ -76,16 +77,20 @@ T_pmbs_ptp = np.ptp(T_pmbs[~np.isnan(T_pmbs)])
 T_pmf = Pfo / Pfi
 T_pmf_err = T_pmf * np.sqrt(2 * err**2)
 
+# calculate the average, expected uncertainty on average and peak to peak variation
 T_pmf_avg = np.nanmean(T_pmf)
 T_pmf_avgerr = np.sqrt(np.nansum(T_pmf_err**2)) / np.sqrt(np.sum(~np.isnan(T_pmf_err)))
 T_pmf_ptp = np.ptp(T_pmf[~np.isnan(T_pmf)])
 
+# array of calibration constants for the two DAQ channels
 cal1_arr = Pbsr / Ch1
 cal2_arr = Pfo / Ch2
 
+# expected uncertainty in the calibration constants
 cal1_err = cal1_arr * err
 cal2_err = cal2_arr * err
 
+# calculate the average, expected uncertainty on average and peak to peak variation
 cal1_avg = np.nanmean(cal1_arr)
 cal2_avg = np.nanmean(cal2_arr)
 
@@ -95,10 +100,11 @@ cal2_avgerr = np.sqrt(np.nansum(cal2_err**2)) / np.sqrt(np.sum(~np.isnan(cal2_er
 cal1_ptp = np.ptp(cal1_arr[~np.isnan(cal1_arr)])
 cal2_ptp = np.ptp(cal2_arr[~np.isnan(cal2_arr)])
 
-# tranmission from DAQ
+# calculate fiber tranmission from DAQ measurements
 T_daq = (Ch2 * cal2_avg) / (Ch1 * cal1_avg) / 2
 T_daq_err = T_daq * np.sqrt((cal2_avgerr / cal2_avg)**2 + (cal1_avgerr / cal1_avg)**2)
 
+# calculate the average, expected uncertainty on average and peak to peak variation
 T_daq_avg = np.nanmean(T_daq)
 T_daq_avgerr = np.sqrt(np.nansum(T_daq_err**2)) / np.sqrt(np.sum(~np.isnan(T_daq_err)))
 T_daq_ptp = np.ptp(T_daq[~np.isnan(T_daq)])
@@ -107,6 +113,7 @@ T_daq_ptp = np.ptp(T_daq[~np.isnan(T_daq)])
 R = Pbsr / Pbst
 R_err = R * np.sqrt(2 * err**2)
 
+# calculate the average, expected uncertainty on average and peak to peak variation
 R_avg = np.nanmean(R)
 R_avgerr = np.sqrt(np.nansum(R_err**2)) / np.sqrt(np.sum(~np.isnan(R_err)))
 R_ptp = np.ptp(R[~np.isnan(R)])
@@ -140,12 +147,12 @@ tprint(f'R_err = {R_avg:.4g}')
 tprint(f'R_ptp = {R_avg:.4g}')
 tprint()
 tprint('Calibration constants:')
-tprint(f'Ch1_avg = {cal1_avg:.4g} uW')
-tprint(f'Ch1_err = {cal1_avgerr:.4g} uW')
-tprint(f'Ch1_ptp = {cal1_ptp:.4g} uW')
-tprint(f'Ch2_avg = {cal2_avg:.4g} uW')
-tprint(f'Ch2_err = {cal2_avgerr:.4g} uW')
-tprint(f'Ch2_ptp = {cal2_ptp:.4g} uW')
+tprint(f'Ch1_avg = {cal1_avg:.4g} uW a.u.^-1')
+tprint(f'Ch1_err = {cal1_avgerr:.4g} uW a.u.^-1')
+tprint(f'Ch1_ptp = {cal1_ptp:.4g} uW a.u.^-1')
+tprint(f'Ch2_avg = {cal2_avg:.4g} uW a.u.^-1')
+tprint(f'Ch2_err = {cal2_avgerr:.4g} uW a.u.^-1')
+tprint(f'Ch2_ptp = {cal2_ptp:.4g} uW a.u.^-1')
 
 # parameters for plotting fiber transmission
 plt.figure(1)
@@ -156,9 +163,9 @@ plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
 # plot the transmission ratios
-plt.errorbar(t, T_pmbs, yerr=T_pmbs_err, fmt='.', capsize=5, c=colr[0], label='$T_{power \; meter}$')
-plt.errorbar(t, T_pmf, yerr=T_pmf_err, fmt='.', capsize=5, c=colr[1], label='$T_{fiber \; only}$')
-plt.errorbar(t, T_daq, yerr=T_daq_err, fmt='.', capsize=5, c=colr[2], label='$T_{DAQ}$')
+plt.errorbar(t, T_pmbs, yerr=T_pmbs_err, fmt='.', capsize=4, c=colr[0], label='$T_{power \; meter}$')
+plt.errorbar(t, T_pmf, yerr=T_pmf_err, fmt='.', capsize=4, c=colr[1], label='$T_{fiber \; only}$')
+plt.errorbar(t, T_daq, yerr=T_daq_err, fmt='.', capsize=4, c=colr[2], label='$T_{DAQ}$')
 
 plt.legend(loc=(0.1, 1.05), ncol=3)
 
@@ -174,7 +181,7 @@ plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
 # plot the beamsplitter ratio
-plt.errorbar(t, R, yerr=R_err, fmt='.', capsize=5, c=colr[0])
+plt.errorbar(t, R, yerr=R_err, fmt='.', capsize=4, c=colr[0])
 
 # save plot
 plt.savefig('Output/PM_beamsplitter.png', dpi=300, bbox_inches='tight')
@@ -189,7 +196,7 @@ plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
 # plot the total laser output power
-plt.errorbar(t, Ptot, yerr=Ptot_err, fmt='.', capsize=5, c=colr[0])
+plt.errorbar(t, Ptot, yerr=Ptot_err, fmt='.', capsize=4, c=colr[0])
 
 # save the plot
 plt.savefig('Output/PM_power.png', dpi=300, bbox_inches='tight')
@@ -203,8 +210,8 @@ plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
 # plot the daq calibration constants
-plt.errorbar(t, cal1_arr, yerr=cal1_err, fmt='.', capsize=5, c=colr[0], label='DAQ Ch1 (beamsplitter reflection)')
-plt.errorbar(t, cal2_arr, yerr=cal2_err, fmt='.', capsize=5, c=colr[3], label='DAQ Ch2 (fiber output)')
+plt.errorbar(t, cal1_arr, yerr=cal1_err, fmt='.', capsize=4, c=colr[0], label='DAQ Ch1 (beamsplitter reflection)')
+plt.errorbar(t, cal2_arr, yerr=cal2_err, fmt='.', capsize=4, c=colr[3], label='DAQ Ch2 (fiber output)')
 
 plt.legend(loc=(-0.1, 1.05), ncol=2)
 
