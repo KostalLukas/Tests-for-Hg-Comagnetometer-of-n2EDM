@@ -1,0 +1,11 @@
+Rampup 1:
+T_avg = 0.4224 uW
+T_sem = 0.0007433 uW
+T_std = 0.005041 uW
+T_ptp = 0.01885 uW
+
+Rampup 2:
+T_avg = 0.4418 uW
+T_sem = 0.0003927 uW
+T_std = 0.002663 uW
+T_ptp = 0.009275 uW
