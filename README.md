@@ -2,9 +2,11 @@
 ## Repository with the data and analysis from the tests carried out for the UV laser system in the Hg co-magnetometer of the n2EDM experiment
 
 In this repository you can currently find:
+- Window Test
+  - window stability: D, 
 - Diode Test
-  -  diode comparison: D, A, R
-  -  diode power ramp: D, A, R (might need better output naming)
+  - diode comparison: D, A, R
+  - diode power ramp: D, A, R (might need better output naming)
 - Fiber Test
   - power meter measurements (PM): D, A, R
   - fiber power rampup: D, A, R 
