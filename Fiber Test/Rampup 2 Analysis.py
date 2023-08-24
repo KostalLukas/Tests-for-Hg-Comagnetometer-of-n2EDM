@@ -21,10 +21,10 @@ def tprint(text=''):
 err = 0.05
 
 # colors for plotting
-clr = ['blue', 'green', 'orange', 'red']
+colr = ['blue', 'green', 'orange', 'red']
 
 # load the data
-# the Fiber_080817_Ru_2.csv dataset cotains data from two power rampups
+# Fiber_080817_Ru_2.csv dataset cotains data from two power rampups
 Vmod, Pfi1, Pfo1, Pfi2, Pfo2 = np.loadtxt('Data/Fiber_080817_Ru_2.csv', unpack=True, delimiter=',', skiprows=1)
 
 # calcualte absolute errors in power
@@ -72,20 +72,20 @@ tprint(f'T_ptp = {ptp2:.4g} uW')
 # parameters for plotting input and output power
 plt.figure(1)
 plt.title('Fiber Input and Output Power against Modulation Voltage', pad=40)
-plt.xlabel('modulation voltage $V_{mod}$ (V))')
+plt.xlabel('modulation voltage $V_{mod}$ (V)')
 plt.ylabel('power $P$ ($\mu W$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
-plt.plot(Vmod, Pfi1, 'x', c=clr[0], label='$P_{fi}$ rampup 1')
-plt.plot(Vmod, Pfi2, 'x', c=clr[3], label='$P_{fi}$ rampup 2')
-plt.plot(Vmod, Pfo1, '.', c=clr[0], label='$P_{fi}$ rampup 1')
-plt.plot(Vmod, Pfo2, '.', c=clr[3], label='$P_{fo}$ rampup 2')
+plt.plot(Vmod, Pfi1, ls='-', c=colr[0], label='$P_{fi}$ rampup 1')
+plt.plot(Vmod, Pfi2, ls='-', c=colr[3], label='$P_{fi}$ rampup 2')
+plt.plot(Vmod, Pfo1, ls='--', c=colr[0], label='$P_{fi}$ rampup 1')
+plt.plot(Vmod, Pfo2, ls='--', c=colr[3], label='$P_{fo}$ rampup 2')
 
-plt.fill_between(Vmod, Pfi1-Pfi1_err, Pfi1+Pfi1_err, color=clr[0], alpha=0.2)
-plt.fill_between(Vmod, Pfi2-Pfi2_err, Pfi2+Pfi2_err, color=clr[3], alpha=0.2)
-plt.fill_between(Vmod, Pfo1-Pfo1_err, Pfo1+Pfo1_err, color=clr[0], alpha=0.2)
-plt.fill_between(Vmod, Pfo2-Pfo2_err, Pfo2+Pfo2_err, color=clr[3], alpha=0.2)
+plt.fill_between(Vmod, Pfi1-Pfi1_err, Pfi1+Pfi1_err, color=colr[0], alpha=0.2)
+plt.fill_between(Vmod, Pfi2-Pfi2_err, Pfi2+Pfi2_err, color=colr[3], alpha=0.2)
+plt.fill_between(Vmod, Pfo1-Pfo1_err, Pfo1+Pfo1_err, color=colr[0], alpha=0.2)
+plt.fill_between(Vmod, Pfo2-Pfo2_err, Pfo2+Pfo2_err, color=colr[3], alpha=0.2)
 
 plt.legend(loc=(-0.2, 1.05), ncol=4)
 
@@ -96,15 +96,16 @@ plt.savefig('Output/Fiber_Ru_2_power.png', dpi=300, bbox_inches='tight')
 plt.figure(2)
 plt.title('Fiber Transmission against Input Power', pad=40)
 plt.xlabel('input power $P_{fi}$ ($\mu W$)')
+
 plt.ylabel('transmission $T = P_{fo} / P_{fi}$ (unitless)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
-plt.plot(Pfi1, T1, c=clr[0], label='rampup 1')
-plt.plot(Pfi2, T2, c=clr[3], label='rampup 2')
+plt.plot(Pfi1, T1, c=colr[0], label='rampup 1')
+plt.plot(Pfi2, T2, c=colr[3], label='rampup 2')
 
-plt.fill_between(Pfi1, T1-T1_err, T1+T1_err, color=clr[0], alpha=0.2)
-plt.fill_between(Pfi2, T2-T2_err, T2+T2_err, color=clr[3], alpha=0.2)
+plt.fill_between(Pfi1, T1-T1_err, T1+T1_err, color=colr[0], alpha=0.2)
+plt.fill_between(Pfi2, T2-T2_err, T2+T2_err, color=colr[3], alpha=0.2)
 
 plt.legend(loc=(0, 1.05), ncol=2)
 
@@ -113,4 +114,3 @@ plt.savefig('Output/Fiber_Ru_2_transmission.png', dpi=300, bbox_inches='tight')
 
 # show the plots
 plt.show()
-
