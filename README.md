@@ -3,14 +3,15 @@
 
 In this repository you can currently find:
 - Diode Test
-  -  diode comparison: D,A,R
-  -  diode power ramp: D,A,R (might need better output naming)
+  -  diode comparison: D, A, R
+  -  diode power ramp: D, A, R (might need better output naming)
 - Fiber Test
-  - power meter (PM): D,A,R
+  - power meter measurements (PM): D, A, R
+  - fiber power rampup: D, A, R 
 - Power Stabilisation
-  - modulation curves: D,A,R
+  - modulation curves: D, A, R
 - S130VC Detector Test
-  - sensitivity map: D,A,R
+  - sensitivity map: D, A, R
 
 Legend: D-data, A-analysis, R-results
 
