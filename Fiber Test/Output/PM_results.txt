@@ -23,9 +23,9 @@ R_err = 0.524
 R_ptp = 0.524
 
 Calibration constants:
-Ch1_avg = 2.763 uW
-Ch1_err = 0.1385 uW
-Ch1_ptp = 0.7133 uW
-Ch2_avg = 3.457 uW
-Ch2_err = 0.1729 uW
-Ch2_ptp = 0.66 uW
+Ch1_avg = 2.763 uW a.u.^-1
+Ch1_err = 0.1385 uW a.u.^-1
+Ch1_ptp = 0.7133 uW a.u.^-1
+Ch2_avg = 3.457 uW a.u.^-1
+Ch2_err = 0.1729 uW a.u.^-1
+Ch2_ptp = 0.66 uW a.u.^-1
