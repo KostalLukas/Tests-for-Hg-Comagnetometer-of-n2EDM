@@ -1,2 +1,31 @@
-Ch1 average calibration constant    = 2.763 ± 0.027 mW V^-1
-Ch2 average calibration constant    = 3.457 ± 0.011 mW V^-1
+Fiber Transmission:
+PM measurement fiber only:
+T_avg = 0.3989
+T_err = 0.3989
+T_ptp = 0.3989
+PM measurement:
+T_avg = 0.3846
+T_err = 0.3846
+T_ptp = 0.3846
+DAQ measurement:
+T_avg = 0.3833
+T_err = 0.3833
+T_ptp = 0.3833
+
+Beamsplitter ratio:
+PM measurement:
+R_avg = 0.524
+R_err = 0.524
+R_ptp = 0.524
+DAQ measurement:
+R_avg = 0.524
+R_err = 0.524
+R_ptp = 0.524
+
+Calibration constants:
+Ch1_avg = 2.763 uW
+Ch1_err = 0.1385 uW
+Ch1_ptp = 0.7133 uW
+Ch2_avg = 3.457 uW
+Ch2_err = 0.1729 uW
+Ch2_ptp = 0.66 uW
