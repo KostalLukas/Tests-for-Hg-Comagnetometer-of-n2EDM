@@ -64,3 +64,7 @@ month, day, hour, minute, Pin, Pbst, Pbsr, Pfi, Pfo, Ch1, Ch2
 # Power was not stabilised for the following fiber test
 08, 15, 18, 16, 1391, 0870, 0466, 0813, 0338, 0.180, 0.097
 08, 16, 09, 49, 0896, 0578, 0303, 0520, 0219, 0.119, 0.063
+# Fiber test stopped for diode and window tests
+# Power is stabilised at ~1000uW
+08, 25, 18, 22, 1040, 0674, 0371, 0624, 0276, 0.140, 0.080
+08, 28, 09, 25, 1069, 0697, 0371, 0668, 0275, 0.140, 0.082
