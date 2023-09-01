@@ -17,4 +17,6 @@ In this repository you can currently find:
 
 Legend: D-data, A-analysis, R-results
 
-Last updated: 24.08.2023
+Large datasets are compressed using the LZMA algorithm and saved as .xz files
+
+Last updated: 01.09.2023
