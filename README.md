@@ -9,7 +9,9 @@ In this repository you can currently find:
   - diode power ramp: D, A, R (might need better output naming)
 - Fiber Test
   - power meter measurements (PM): D, A, R
-  - fiber power rampup: D, A, R 
+  - DAQ measurements (DAQ): D,
+  - Fiber exposure time: A
+  - fiber power rampup: D, A, R
 - Power Stabilisation
   - modulation curves: D, A, R
 - S130VC Detector Test
@@ -19,4 +21,4 @@ Legend: D-data, A-analysis, R-results
 
 Large datasets are compressed using the LZMA algorithm and saved as .xz files
 
-Last updated: 01.09.2023
+Last updated: 04.09.2023
