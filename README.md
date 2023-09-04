@@ -9,8 +9,8 @@ In this repository you can currently find:
   - diode power ramp: D, A, R (might need better output naming)
 - Fiber Test
   - power meter measurements (PM): D, A, R
-  - DAQ measurements (DAQ): D,
-  - Fiber exposure time: A
+  - DAQ system measurements (DAQ): D,
+  - fiber exposure time: A
   - fiber power rampup: D, A, R
 - Power Stabilisation
   - modulation curves: D, A, R
