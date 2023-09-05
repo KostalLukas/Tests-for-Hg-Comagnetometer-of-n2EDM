@@ -283,7 +283,7 @@ colr = ['royalblue', 'orange', 'limegreen']
 
 # transparency and line width for plotting error regions
 alph = 0.35
-lw = 2
+lw = 1.6
 
 # labels for plotting
 labels = ['Ch1 (BS reflection)', 'Ch2 (fiber output)', 'Ch3 (internal FHG)']
