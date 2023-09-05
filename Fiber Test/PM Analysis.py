@@ -45,9 +45,6 @@ for i in range(0, n):
     t[i] += (date[2, i] - date[2, 0])
     t[i] += (date[3, i] - date[3, 0]) / 60
 
-# convert power to mW
-data[4:9, :] /= 1000
-
 # slice the data into measurements P in uW and DAQ in V
 Ptot = data[4, :] 
 Pbst = data[5, :]
@@ -191,7 +188,7 @@ plt.show()
 plt.figure(3)
 plt.title('Total Laser Output Power over Time')
 plt.xlabel('time $t$ (h)')
-plt.ylabel('output power $P_{out}$ (mW)')
+plt.ylabel('output power $P_{out}$ ($\mu W$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
