@@ -22,7 +22,7 @@ def tprint(text=''):
 err = 0.05
 
 # specify colors for plotting
-colr = ['blue', 'green', 'orange', 'red']
+colr = ['royalblue', 'limegreen', 'orange', 'red']
 
 # load the data
 data = np.loadtxt('Data/Powermeter_data.csv', unpack=True, delimiter=',', skiprows=1)
