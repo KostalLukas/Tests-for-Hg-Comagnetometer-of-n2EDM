@@ -214,7 +214,7 @@ if n_ch > 2:
     R23_ptp = np.ptp(R23)
 
 # print the numerical results
-file = f'Output/{data}_results.txt'
+file = f'Output/DAQ_{data}_results.txt'
 open(file, 'w')
 
 tprint(f'dataset:          {data}')
