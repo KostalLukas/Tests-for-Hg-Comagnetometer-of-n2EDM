@@ -1,8 +1,0 @@
-total exposure time      = 784.75 h
-
-no of datasets           = 32
-start date               = 7.0.7.0.17.0.0.0
-end date                 = 8.0.28.0.9.0.25.0
-total datasets timespan  = 3399.20 h
-
-dt threshold             = 2 h
