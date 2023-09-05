@@ -1,0 +1,35 @@
+dataset:          UV_new10m_0809_14_42
+
+total time           = 114.943 h
+time above threshold = 114.942 h
+
+Ch1 mean power       = 706 ± 35.38 uW
+Ch2 mean power       = 504.9 ± 25.44 uW
+Ch3 mean power       = 193 ± 7.884 uW
+
+Ch1 ptp power        = 623.3 uW
+Ch2 ptp power        = 459.1 uW
+Ch3 ptp power        = 122.9 uW
+
+RMS Ch1 fluctuation  = 0.0357374 uW s^-1
+RMS Ch2 fluctuation  = 0.0423331 uW s^-1
+RMS Ch3 fluctuation  = 0.00599918 uW
+
+mean transmission    = 0.371 ± 0.2049
+ptp transmission     = 0.2987
+RMS T fluctuation    = 5.19604e-05 uW s^-1
+mean attenuation     = 0.1492 ± 3.074e-05 dBm^-1
+
+mean ratio R23       = 2.612 ± 0.1696
+ptp ratio R23        = 2.175
+
+
+Ch1 cal              = 2759 uWV^-1
+Ch2 cal              = 3455 uWV^-1
+Ch3 cal              = 4900 uWV^-1
+threshold            = 100 uW
+sampling freq        = 10 Hz
+low pass filter      = True
+cutoff freq          = 0.0002778 Hz
+beamsplitter ratio   = 0.52
+fiber length         = 10.0 m
