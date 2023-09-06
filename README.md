@@ -7,14 +7,14 @@ In this repository you can currently find:
 - Diode Test
   - diode comparison: D, A, R
   - diode power ramp: D, A, R (might need better output naming)
-- Fiber Test &#2705;
+- Fiber Test &#2713;
   - power meter measurements (PM): D, A, R
   - DAQ system measurements (DAQ): D, A, R
   - fiber exposure time: A, R
   - fiber power rampup: D, A, R
-- Power Stabilisation &#2705;
+- Power Stabilisation &#2713;
   - modulation curves: D, A, R
-- S130VC Detector Test &#2705;
+- S130VC Detector Test &#2713;
   - sensitivity map: D, A, R
 
 Legend: D-data, A-analysis, R-results
