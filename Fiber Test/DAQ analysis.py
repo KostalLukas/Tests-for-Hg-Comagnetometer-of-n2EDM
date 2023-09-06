@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Fiber Test ADC Analysis v6.0
+Fiber Test DAQ Analysis v6.0
 
 Lukas Kostal, 5.9.2023, PSI
 """
