@@ -51,7 +51,7 @@ sens = 200
 data, Pset, Iact, Vmac, Vmin = garg(data, Pset, Iact, Vmax, Vmin)
 
 # specify colors for plotting
-colr = ['blue', 'limegreen', 'orange', 'red']
+colr = ['royalblue', 'limegreen', 'orange', 'red']
 
 # load the data
 vals = np.loadtxt(f'Data/{data}.csv', unpack=True, delimiter=',', skiprows=1)
@@ -151,7 +151,7 @@ if len(vals) == 3:
     plt.figure(2)
     plt.title('Output Power against Modulation Voltage')
     plt.xlabel('voltage $V_{mod}$ (V)')
-    plt.ylabel('output power $P$ (mW)')
+    plt.ylabel('output power $P$ ($\mu W$)')
     plt.rc('grid', linestyle=':', c='black', alpha=0.8)
     plt.grid()
 
@@ -162,9 +162,9 @@ if len(vals) == 3:
     
     # parameters for plotting output power against TA current
     plt.figure(3)
-    plt.title('Output Power against TA Current')
+    plt.title('Output Power against TA Current', pad=40)
     plt.xlabel('TA current $I_{act}$ (mA)')
-    plt.ylabel('output power $P$ (mW)')
+    plt.ylabel('output power $P$ ($\mu W$)')
     plt.rc('grid', linestyle=':', c='black', alpha=0.8)
     plt.grid()
 
@@ -174,16 +174,19 @@ if len(vals) == 3:
     plt.axhline(Pact_max, ls='--', c=colr[0])
     plt.axhline(Pact_min, ls='--', c=colr[0])
     plt.fill_between([Iact_min, Iact_max], [Pact_min, Pact_min], \
-                     [Pact_max, Pact_max], color=colr[0], alpha=0.2)
+                     [Pact_max, Pact_max], color=colr[0], alpha=0.2, \
+                     label='acrual modulation region')
     
     plt.axvline(Iset_max, ls='--', c=colr[3])
     plt.axvline(Iset_min, ls='--', c=colr[3])
     plt.axhline(Pset_max, ls='--', c=colr[3])
     plt.axhline(Pset_min, ls='--', c=colr[3])
     plt.fill_between([Iset_min, Iset_max], [Pset_min, Pset_min], \
-                     [Pset_max, Pset_max], color=colr[3], alpha=0.2)
+                     [Pset_max, Pset_max], color=colr[3], alpha=0.2, \
+                     label='desired modulation region')
 
     # save plot
+    plt.legend(loc=(0, 1.05), ncol=2)
     plt.savefig('Output/Modulation_IP.png', dpi=300, bbox_inches='tight')
 
     # show the plots
@@ -195,7 +198,7 @@ else:
     plt.figure(1)
     plt.title('Output Power against TA Current')
     plt.xlabel('TA current $Iact$ (mA)')
-    plt.ylabel('output power $P$ (mW)')
+    plt.ylabel('output power $P$ ($\mu W$)')
     plt.rc('grid', linestyle=':', c='black', alpha=0.8)
     plt.grid()
 
