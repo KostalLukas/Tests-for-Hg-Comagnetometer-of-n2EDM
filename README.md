@@ -5,8 +5,8 @@ In this repository you can currently find:
 - Window Test
   - window stability: D, 
 - Diode Test
-  - diode comparison: D, A, R
-  - diode power ramp: D, A, R (might need better output naming)
+  - diode comparison: D 
+  - diode tests: D, A, R
 - Fiber Test &#09989;
   - power meter measurements (PM): D, A, R
   - DAQ system measurements (DAQ): D, A, R
