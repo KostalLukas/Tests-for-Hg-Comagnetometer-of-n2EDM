@@ -219,7 +219,7 @@ dR23_rms = np.sqrt(np.sum(dR23**2) / n)
 dR23_rms_err = np.sqrt(np.sum(dR23**2 * dR23_err**2) ) / np.sqrt((n-1) * np.sum(dR23**2))
 
 # print the numerical results
-file = f'Output/DAQ_{data}_results.txt'
+file = f'Output/{data}_results.txt'
 open(file, 'w')
 
 tprint(f'dataset:             {data}')
@@ -288,7 +288,7 @@ colr = ['royalblue', 'orange', 'limegreen']
 
 # transparency and line width for plotting error regions
 alph = 0.35
-lw = 1.6
+lw = 1.2
 
 # parameters for plotting measured power
 plt.figure(1)
@@ -336,7 +336,7 @@ for i in range(0, 3):
                      color=colr[i], alpha=alph)
         
 plt.legend(loc=(0, 1.05), markerscale=20, ncol=3)
-plt.savefig(f'Output/DAQ_{data}_dPdt.png', dpi=300, bbox_inches='tight')
+plt.savefig(f'Output/{data}_dPdt.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting ratio of Ch2 to Ch1
 plt.figure(4)
@@ -349,7 +349,7 @@ plt.grid()
 plt.plot(th, R21, c=colr[0])
 plt.fill_between(th, R21 - R21_err, R21 + R21_err, color=colr[0], alpha=alph, linewidth=lw)
 
-plt.savefig(f'Output/DAQ_{data}_R21.png', dpi=300, bbox_inches='tight')
+plt.savefig(f'Output/{data}_R21.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting ratio of Ch2 to Ch3
 plt.figure(5)
@@ -362,7 +362,7 @@ plt.grid()
 plt.plot(th, R23, c=colr[0])
 plt.fill_between(th, R23 - R23_err, R23 + R23_err, color=colr[0], alpha=alph, linewidth=lw)
 
-plt.savefig(f'Output/DAQ_{data}_R23.png', dpi=300, bbox_inches='tight')
+plt.savefig(f'Output/{data}_R23.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting rate of change of ratios
 plt.figure(6)
@@ -381,7 +381,7 @@ plt.fill_between(th, dR23 - dR23_err, dR23 + dR23_err, color=colr[1], \
                  alpha=alph, linewidth=lw, label='ratio $R_{23}$')
 
 plt.legend(loc=(0, 1.05), markerscale=20, ncol=2)
-plt.savefig(f'Output/DAQ_{data}_dRdt.png', dpi=300, bbox_inches='tight')
+plt.savefig(f'Output/{data}_dRdt.png', dpi=300, bbox_inches='tight')
 
 if FFT == True:
     # parameters for plotting fft of both ratios
@@ -403,7 +403,7 @@ if FFT == True:
     plt.xlim(0, fc/2)
     plt.ylim(np.amin(np.minimum(lfftR21, lfftR23)), np.amax(np.maximum(lfftR21, lfftR23)))
     plt.legend(loc=(0, 1.05), markerscale=20, ncol=2)
-    plt.savefig(f'Output/DAQ_{data}_FFT.png', dpi=300, bbox_inches='tight')
+    plt.savefig(f'Output/{data}_FFT.png', dpi=300, bbox_inches='tight')
 
 # show the plots
 plt.show()
