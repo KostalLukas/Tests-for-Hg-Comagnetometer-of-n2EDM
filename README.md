@@ -4,7 +4,7 @@
 In this repository you can currently find:
 - Window Test
   - window stability: D, 
-- Diode Test
+- Diode Test &#09989;
   - diode comparison: D 
   - diode tests: D, A, R
 - Fiber Test &#09989;
