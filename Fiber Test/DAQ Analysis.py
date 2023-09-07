@@ -36,13 +36,31 @@ def butter_lp(arr, fs, fc, order):
     return arr
 
 
+# function to get symmetric twin y axis to allign y=0
+def set_scales(ax1, ax2):
+    y1_min, y1_max = ax1.set_ylim()
+    y2_min, y2_max = ax2.set_ylim()
+    
+    y1_lim = np.maximum(-y1_min, y1_max) * 1.1
+    y2_lim = np.maximum(-y2_min, y2_max) * 1.1
+    
+    ax1.set_ylim(-y1_lim, y1_lim)
+    ax2.set_ylim(-y2_lim, y2_lim)
+    
+    return None
+
+
+# array of range settings on the DAQ
+# 2 => ±10V, 3 => ±5V, 4 => ±2.5V, 5 => ±1.25V
+ch_set = np.array([2, 2, 2])
+
 # array of calibration constants and absolute errors in uWV^-1
-cal_arr = np.array([2759, 3455, 4900])
-cal_err = np.array([138, 173, 200])
+cal_arr = np.array([275.9, 345.5, 286600])
+cal_err = np.array([13.8, 17.3, 14300])
 
 # beam splitter ratio and abslute error
-Rbs = 0.52
-Rbs_err = 0.1
+Rbs = 0.525
+Rbs_err = 0.037
 
 # sampling frequency in Hz
 fs = 10
@@ -68,8 +86,11 @@ data = 'UV_new10m_0809_14_42'
 # get input parameters
 data, SPLOT, P_th, LPF, fc = garg(data, SPLOT, P_th, LPF, fc)
 
+# map of DAQ channel voltage ranges in V
+ch_map = np.array([10, 5, 2.5, 1.25])
+
 # print update on status
-print('reading data')
+print('loading data')
 
 # load the data
 V_arr = np.genfromtxt(f'Data/{data}.txt', skip_footer=1, unpack=True, delimiter=',')
@@ -106,6 +127,9 @@ P_err = np.zeros(V_arr.shape)
 
 # loop over data for each channel to calibrate and apply LPF
 for i in range(0, n_ch):
+    # adjust for the DAQ voltage range
+    V_arr[i, :] *= ch_map[ch_set[i] - 2]
+    
     # calcualte power from DAQ voltage
     P_arr[i, :] = V_arr[i, :] * cal_arr[i]
     
@@ -138,8 +162,7 @@ n = len(t)
 th = t / 3600
 
 # print update on status
-print('calculating numerical results and errors')
-print()
+print('analysing')   
 
 # arrays to hold power fluctuations and associated error in uW
 fP_arr = np.zeros(P_arr.shape)
@@ -170,11 +193,19 @@ T_err = np.sqrt((R21_err / R21)**2 + (Rbs_err / Rbs)**2)
 A = 10 * np.log10(1 / R21) / l
 A_err = 10 / np.log(10) / R21 * R21_err / l * 1e-3
 
-
 # calculate ratio of power measured by Ch2 and Ch3 and associated error
 if n_ch > 2:
     R23 = P_arr[1, :] / P_arr[2, :]
     R23_err = R23 * np.sqrt((P_err[1, :] / P_arr[1, :])**2 + (P_err[2, :] / P_arr[2, :])**2)
+
+# rate of change of fiber transmision and associated error
+dT = np.diff(R21) / np.diff(t)
+dT_err = np.zeros(n-1)
+for i in range(1, n):
+    dT_err[i-1] = np.sqrt(T_err[i-1]**2 + T_err[i]**2)
+
+# print update on status
+print('calculating numerical results and errors')
 
 # calcualte average power and associated error for each channel as well as STD and PTP
 P_avg = np.mean(P_arr, axis=1)
@@ -196,12 +227,6 @@ A_avg_err = np.sqrt(np.sum(A_err**2) / n)
 dP_rms = np.sqrt(np.sum(dP_arr**2, axis=1) / n)
 dP_rms_err = np.sqrt(np.sum(dP_arr**2 * dP_err**2, axis=1) ) / np.sqrt((n-1) * np.sum(dP_arr**2, axis=1))
 
-# rate of change of fiber transmision and associated error
-dT = np.diff(R21) / np.diff(t)
-dT_err = np.zeros(n-1)
-for i in range(1, n):
-    dT_err[i-1] = np.sqrt(T_err[i-1]**2 + T_err[i]**2)
-
 # calcaute RMS of rate of change of fiber transmission and associated error
 dT_rms = np.sqrt(np.sum(dT**2) / n)
 dT_rms_err = np.sqrt(np.sum(dT**2 * dT_err**2) ) / np.sqrt((n-1) * np.sum(dT**2))
@@ -212,12 +237,16 @@ if n_ch > 2:
     R23_avg_err = np.sqrt(np.sum(R23_err**2) / n)
     R23_std = np.std(R23)
     R23_ptp = np.ptp(R23)
+    
+# print update on status
+print('printing results')
+print()
 
 # print the numerical results
 file = f'Output/DAQ_{data}_results.txt'
 open(file, 'w')
 
-tprint(f'dataset:          {data}')
+tprint(f'dataset:             {data}')
 tprint()
 tprint(f'total time           = {t_tot:.3f} h')
 tprint(f'time above threshold = {th[-1]:.3f} h')
@@ -232,29 +261,33 @@ tprint(f'Ch2 ptp power        = {P_ptp[1]:.4g} uW')
 if n_ch > 2:
     tprint(f'Ch3 ptp power        = {P_ptp[2]:.4g} uW')
 tprint()
-tprint(f'RMS Ch1 fluctuation  = {dP_rms[0]:4g} uW s^-1')
-tprint(f'RMS Ch2 fluctuation  = {dP_rms[1]:4g} uW s^-1')
+tprint(f'Ch1 RMS dP/dt        = {dP_rms[0]:4g} ± {dP_rms_err[0]:.4g} uW s^-1')
+tprint(f'Ch2 RMS dP/dt        = {dP_rms[1]:4g} ± {dP_rms_err[1]:.4g} uW s^-1')
 if n_ch > 2:
-    tprint(f'RMS Ch3 fluctuation  = {dP_rms[2]:4g} uW')
+    tprint(f'Ch3 RMS dP/dt        ={dP_rms[2]:4g} ± {dP_rms_err[2]:.4g} uW s^-1')
 tprint()
 tprint(f'mean transmission    = {T_avg:.4g} ± {T_avg_err:.4g}')
 tprint(f'ptp transmission     = {T_ptp:.4g}')
-tprint(f'RMS T fluctuation    = {dT_rms:4g} uW s^-1')
+tprint(f'RMS T dT/dt          = {dT_rms:4g}  ± {dT_rms_err:.4g} uW s^-1')
 tprint(f'mean attenuation     = {A_avg:.4g} ± {A_avg_err:.4g} dBm^-1')
 tprint()
 if n_ch > 2:
     tprint(f'mean ratio R23       = {R23_avg:.4g} ± {R23_avg_err:.4g}')
     tprint(f'ptp ratio R23        = {R23_ptp:.4g}')
 tprint()
+tprint(f'Ch1 cal              = {cal_arr[0]} ± {cal_err[0]} uWV^-1')
+tprint(f'Ch2 cal              = {cal_arr[1]} ± {cal_err[1]} uWV^-1')
+tprint(f'Ch3 cal              = {cal_arr[2]} ± {cal_err[2]} uWV^-1')
 tprint()
-tprint(f'Ch1 cal              = {cal_arr[0]} uWV^-1')
-tprint(f'Ch2 cal              = {cal_arr[1]} uWV^-1')
-tprint(f'Ch3 cal              = {cal_arr[2]} uWV^-1')
+tprint(f'Ch1 range:             {ch_set[0]} => ±{ch_map[ch_set[0]-2]} V')
+tprint(f'Ch2 range:             {ch_set[1]} => ±{ch_map[ch_set[1]-2]} V')
+tprint(f'Ch3 range:             {ch_set[2]} => ±{ch_map[ch_set[2]-2]} V')
+tprint()
 tprint(f'threshold            = {P_th:.4g} uW')
 tprint(f'sampling freq        = {fs:.4g} Hz')
 tprint(f'low pass filter      = {LPF}')
 tprint(f'cutoff freq          = {fc:.4g} Hz')
-tprint(f'beamsplitter ratio   = {Rbs}')
+tprint(f'beamsplitter ratio   = {Rbs} ± {Rbs_err}')
 tprint(f'fiber length         = {l:.1f} m')
 
 # print update on status
@@ -278,62 +311,93 @@ if SPLOT == True:
     R23 = R23[::sval]
     R23_err = R23_err[::sval]
 
+P_arr[2] *= 1e-3
+P_err[2] *= 1e-3
+fP_arr[2] *= 1e-3
+fP_err[2] *= 1e-3
+dP_arr[2] *= 1e-3
+dP_err[2] *= 1e-3
+
 # colors for plotting
 colr = ['royalblue', 'orange', 'limegreen']
+lcolr = ['blue', 'orangered', 'green']
 
 # transparency and line width for plotting error regions
-alph = 0.35
-lw = 1.6
+alph = 0.2
+lw = 1.8
 
 # labels for plotting
 labels = ['Ch1 (BS reflection)', 'Ch2 (fiber output)', 'Ch3 (internal FHG)']
 
 # parameters for plotting measured power
-plt.figure(1)
+fig1 = plt.figure(1)
+
+ax1 = fig1.add_subplot(111)
+ax2 = ax1.twinx()
+axs = [ax1, ax1, ax2]
+
 plt.title(f'Measured Power over Time \n Dataset: {data}', pad=40)
-plt.xlabel('time $t$ (h)')
-plt.ylabel('power $P$ ($\mu W$)')
+ax1.set_xlabel('time $t$ (h)')
+ax1.set_ylabel('power $P$ ($\mu W$)')
+ax2.set_ylabel('FHG input $P_{FHG}$ ($m W$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
-plt.grid()
+ax1.grid()
 
 for i in range(0, n_ch):
-    plt.plot(th, P_arr[i, :], c=colr[i], label=labels[i], linewidth=lw)
-    plt.fill_between(th, P_arr[i, :] - P_err[i, :], P_arr[i, :] + P_err[i, :], \
+    axs[i].plot(th, P_arr[i, :], c=lcolr[i], label=labels[i], linewidth=lw)
+    axs[i].fill_between(th, P_arr[i, :] - P_err[i, :], P_arr[i, :] + P_err[i, :], \
                      color=colr[i], alpha=alph)
-    
-plt.legend(loc=(0, 1.05), markerscale=20, ncol=3)
+
+plt.legend(handles= ax1.lines + ax2.lines, loc=(-0.1, 1.05), markerscale=20, ncol=3)
 plt.savefig(f'Output/DAQ_{data}_P.png', dpi=300, bbox_inches='tight')
         
 # parameters for plotting power fluctuation
-plt.figure(2)
+fig2 = plt.figure(2)
+
+ax1 = fig2.add_subplot(111)
+ax2 = ax1.twinx()
+axs = [ax1, ax1, ax2]
+
+ax1.set_zorder=10
+ax2.set_zorder=0
+
 plt.title(f'Power Fluctuation over Time \n Dataset: {data}', pad=40)
-plt.xlabel('time $t$ (h)')
-plt.ylabel('power fluctuation $\Delta P$ ($\mu W$)')
+ax1.set_xlabel('time $t$ (h)')
+ax1.set_ylabel('power fluctuation $\Delta P$ ($\mu W$)')
+ax2.set_ylabel('FHG inout fluctuation $\Delta P_{FHG}$ ($m W$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
-plt.grid()
+ax1.grid()
 
 for i in range(0, n_ch):
-    plt.plot(th, fP_arr[i, :], c=colr[i], label=labels[i], linewidth=lw)
-    plt.fill_between(th, fP_arr[i, :] - fP_err[i, :], fP_arr[i, :] + fP_err[i, :], \
+    axs[i].plot(th, fP_arr[i, :], c=lcolr[i], label=labels[i], linewidth=lw)
+    axs[i].fill_between(th, fP_arr[i, :] - fP_err[i, :], fP_arr[i, :] + fP_err[i, :], \
                      color=colr[i], alpha=alph)
 
-plt.legend(loc=(0, 1.05), markerscale=20, ncol=3)
+set_scales(ax1, ax2)
+plt.legend(handles= ax1.lines + ax2.lines, loc=(-0.1, 1.05), markerscale=20, ncol=3)
 plt.savefig(f'Output/DAQ_{data}_fP.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting rate of power fluctuation
-plt.figure(3)
+fig3 = plt.figure(3)
+
+ax1 = fig3.add_subplot(111)
+ax2 = ax1.twinx()
+axs = [ax1, ax1, ax2]
+
 plt.title(f'Rate of Power Fluctuation over Time \n Dataset: {data}', pad=40)
-plt.xlabel('time $t$ (h)')
-plt.ylabel('rate of power fluctuation $dP/dt$ ($\mu W s^-1$)')
+ax1.set_xlabel('time $t$ (h)')
+ax1.set_ylabel('rate of power fluctuation $dP/dt$ ($\mu W s^-1$)')
+ax2.set_ylabel('FHG input rate of fluctuation $dP_{FHG}/dt$ ($m W s^-1$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
-plt.grid()
+ax1.grid()
 
 for i in range(0, n_ch):
-    plt.plot(th, dP_arr[i, :], c=colr[i], label=labels[i], linewidth=lw)
-    plt.fill_between(th, dP_arr[i, :] - dP_err[i, :], dP_arr[i, :] + dP_err[i, :], \
-                     color=colr[i], alpha=alph)
-        
-plt.legend(loc=(0, 1.05), markerscale=20, ncol=3)
+    axs[i].plot(th, dP_arr[i, :], c=lcolr[i], label=labels[i], linewidth=lw)
+    axs[i].fill_between(th, dP_arr[i, :] - dP_err[i, :], dP_arr[i, :] + dP_err[i, :], \
+                     color=colr[i], alpha=alph)     
+
+set_scales(ax1, ax2)   
+plt.legend(handles= ax1.lines + ax2.lines, loc=(-0.1, 1.05), markerscale=20, ncol=3)
 plt.savefig(f'Output/DAQ_{data}_dPdt.png', dpi=300, bbox_inches='tight')
         
 # parameters for plotting fiber transmission
@@ -344,7 +408,7 @@ plt.ylabel('transmission $T$ (unitless)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
-plt.plot(th, T, c=colr[0])
+plt.plot(th, T, c=lcolr[0])
 plt.fill_between(th, T - T_err, T + T_err, color=colr[0], alpha=alph, linewidth=lw)
 
 plt.savefig(f'Output/DAQ_{data}_T.png', dpi=300, bbox_inches='tight')
@@ -357,7 +421,7 @@ plt.ylabel('transmission $dT/dt$ ($s^{-1}$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
-plt.plot(th, dT, c=colr[0])
+plt.plot(th, dT, c=lcolr[0])
 plt.fill_between(th, dT - dT_err, dT + dT_err, color=colr[0], alpha=alph, linewidth=lw)
 
 plt.savefig(f'Output/DAQ_{data}_dTdt.png', dpi=300, bbox_inches='tight')
@@ -370,10 +434,13 @@ plt.ylabel('ratio $R_{23}$ (unitless)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
-plt.plot(th, R23, c=colr[0])
+plt.plot(th, R23, c=lcolr[0])
 plt.fill_between(th, R23 - R23_err, R23 + R23_err, color=colr[0], alpha=alph, linewidth=lw)
 
 plt.savefig(f'Output/DAQ_{data}_R23.png', dpi=300, bbox_inches='tight')
 
+# show plots
 plt.show()
 
+# print update on status
+print('done')
