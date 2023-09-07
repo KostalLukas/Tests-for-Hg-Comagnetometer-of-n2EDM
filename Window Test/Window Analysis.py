@@ -230,7 +230,7 @@ print('printing results')
 print()
 
 # print the numerical results
-file = f'Output/DAQ_{data}_results.txt'
+file = f'Output/{data}_results.txt'
 open(file, 'w')
 
 tprint(f'dataset:               {data}')
@@ -393,7 +393,7 @@ plt.grid()
 plt.plot(th, R23, c=colr[0])
 plt.fill_between(th, R23 - R23_err, R23 + R23_err, color=colr[0], alpha=alph, linewidth=lw)
 
-plt.savefig(f'Output/DAQ_{data}_R23.png', dpi=300, bbox_inches='tight')
+plt.savefig(f'Output/{data}_R23.png', dpi=300, bbox_inches='tight')
 
 # show plots
 plt.show()
