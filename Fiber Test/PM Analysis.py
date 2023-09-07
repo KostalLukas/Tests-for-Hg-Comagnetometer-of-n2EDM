@@ -21,21 +21,24 @@ def tprint(text=''):
 # relative error in power meter measurements
 err = 0.05
 
-# specify colors for plotting
-colr = ['royalblue', 'limegreen', 'orange', 'red']
+# voltage range settings on DAQ channels
+ch_set = np.array([2, 2, 2])
+
+# map of DAQ channel voltage ranges in V
+ch_map = np.array([10, 5, 2.5, 1.25])
+
+# specify no of days in each month
+# taking 2024 to be a leap year otherwise change 29 -> 28
+mtd = np.array([31, 30, 29, 31, 30, 31, 30, 31, 30, 31, 30, 31])
 
 # load the data
-data = np.loadtxt('Data/Powermeter_data.csv', unpack=True, delimiter=',', skiprows=1)
+data = np.loadtxt('Data/PM_data.csv', unpack=True, delimiter=',', skiprows=1)
 
 # number of measurements
 n = len(data[0, :])
 
 # array to hold date in month, day, hour, minute format
 date = data[0:4, :]
-
-# specify no of days in each month
-# taking 2024 to be a leap year otherwise change 29 -> 28
-mtd = np.array([31, 30, 29, 31, 30, 31, 30, 31, 30, 31, 30, 31])
 
 # convert date into elapsed time in h
 t = np.zeros(n)
@@ -79,9 +82,13 @@ T_pmf_avg = np.nanmean(T_pmf)
 T_pmf_avgerr = np.sqrt(np.nansum(T_pmf_err**2)) / np.sqrt(np.sum(~np.isnan(T_pmf_err)))
 T_pmf_ptp = np.ptp(T_pmf[~np.isnan(T_pmf)])
 
+# adjust the DAQ readings for the voltage range of channels
+Vch1 = Ch1 * ch_map[ch_set[0] -2]
+Vch2 = Ch2 * ch_map[ch_set[1] -2]
+
 # array of calibration constants for the two DAQ channels
-cal1_arr = Pbsr / Ch1
-cal2_arr = Pfo / Ch2
+cal1_arr = Pbsr / Vch1
+cal2_arr = Pfo / Vch2
 
 # expected uncertainty in the calibration constants
 cal1_err = cal1_arr * err
@@ -98,7 +105,7 @@ cal1_ptp = np.ptp(cal1_arr[~np.isnan(cal1_arr)])
 cal2_ptp = np.ptp(cal2_arr[~np.isnan(cal2_arr)])
 
 # calculate fiber tranmission from DAQ measurements
-T_daq = (Ch2 * cal2_avg) / (Ch1 * cal1_avg) / 2
+T_daq = (Vch2 * cal2_avg) / (Vch1 * cal1_avg) / 2
 T_daq_err = T_daq * np.sqrt((cal2_avgerr / cal2_avg)**2 + (cal1_avgerr / cal1_avg)**2)
 
 # calculate the average, expected uncertainty on average and peak to peak variation
@@ -122,34 +129,33 @@ open(file, 'w')
 tprint('Fiber Transmission:')
 tprint('PM measurement fiber only:')
 tprint(f'T_avg = {T_pmf_avg:.4g}')
-tprint(f'T_err = {T_pmf_avg:.4g}')
-tprint(f'T_ptp = {T_pmf_avg:.4g}')
+tprint(f'T_err = {T_pmf_avgerr:.4g}')
+tprint(f'T_ptp = {T_pmf_ptp:.4g}')
 tprint('PM measurement:')
 tprint(f'T_avg = {T_pmbs_avg:.4g}')
-tprint(f'T_err = {T_pmbs_avg:.4g}')
-tprint(f'T_ptp = {T_pmbs_avg:.4g}')
+tprint(f'T_err = {T_pmbs_avgerr:.4g}')
+tprint(f'T_ptp = {T_pmbs_ptp:.4g}')
 tprint('DAQ measurement:')
 tprint(f'T_avg = {T_daq_avg:.4g}')
-tprint(f'T_err = {T_daq_avg:.4g}')
-tprint(f'T_ptp = {T_daq_avg:.4g}')
+tprint(f'T_err = {T_daq_avgerr:.4g}')
+tprint(f'T_ptp = {T_daq_ptp:.4g}')
 tprint()
 tprint('Beamsplitter ratio:')
-tprint('PM measurement:')
 tprint(f'R_avg = {R_avg:.4g}')
-tprint(f'R_err = {R_avg:.4g}')
-tprint(f'R_ptp = {R_avg:.4g}')
-tprint('DAQ measurement:')
-tprint(f'R_avg = {R_avg:.4g}')
-tprint(f'R_err = {R_avg:.4g}')
-tprint(f'R_ptp = {R_avg:.4g}')
+tprint(f'R_err = {R_avgerr:.4g}')
+tprint(f'R_ptp = {R_ptp:.4g}')
 tprint()
 tprint('Calibration constants:')
-tprint(f'Ch1_avg = {cal1_avg:.4g} uW V^-1')
-tprint(f'Ch1_err = {cal1_avgerr:.4g} uW V^-1')
-tprint(f'Ch1_ptp = {cal1_ptp:.4g} uW V^-1')
-tprint(f'Ch2_avg = {cal2_avg:.4g} uW V^-1')
-tprint(f'Ch2_err = {cal2_avgerr:.4g} uW V^-1')
-tprint(f'Ch2_ptp = {cal2_ptp:.4g} uW V^-1')
+tprint(f'Ch1_avg = {cal1_avg:.4g} uWV^-1')
+tprint(f'Ch1_err = {cal1_avgerr:.4g} uWV^-1')
+tprint(f'Ch1_ptp = {cal1_ptp:.4g} uWV^-1')
+tprint(f'Ch2_avg = {cal2_avg:.4g} uWV^-1')
+tprint(f'Ch2_err = {cal2_avgerr:.4g} uWV^-1')
+tprint(f'Ch2_ptp = {cal2_ptp:.4g} uWV^-1')
+tprint('measured for D1 on Ch1 and D2 on Ch2')
+
+# specify colors for plotting
+colr = ['royalblue', 'limegreen', 'orange', 'red']
 
 # parameters for plotting fiber transmission
 plt.figure(1)
