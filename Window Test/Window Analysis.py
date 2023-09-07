@@ -94,7 +94,7 @@ ch_map = np.array([10, 5, 2.5, 1.25])
 print('loading data')
 
 # number of window tested
-win = int(data[-1])
+win = int(data[15])
 
 # load the data
 V_arr = np.genfromtxt(f'Data/{data}.txt', skip_footer=1, unpack=True, delimiter=',')
