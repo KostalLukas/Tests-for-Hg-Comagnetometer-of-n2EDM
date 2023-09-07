@@ -9,7 +9,7 @@ T_err = 0.02724
 T_ptp = 0.1391
 DAQ measurement:
 T_avg = 0.3829
-T_err = 0.0272
+T_err = 0.02720
 T_ptp = 0.1218
 
 Beamsplitter ratio:
@@ -23,5 +23,5 @@ Ch1_err = 13.83 uWV^-1
 Ch1_ptp = 71.33 uWV^-1
 Ch2_avg = 345.5 uWV^-1
 Ch2_err = 17.28 uWV^-1
-Ch2_ptp = 66 uWV^-1
+Ch2_ptp = 66.00 uWV^-1
 measured for D1 on Ch1 and D2 on Ch2
