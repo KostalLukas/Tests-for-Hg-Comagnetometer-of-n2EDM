@@ -1,7 +1,8 @@
 # Tests-for-Hg-Comagnetometer-of-n2EDM
-## Repository with the data and analysis from the tests carried out for the UV laser system in the Hg co-magnetometer of the n2EDM experiment
+### Repository containing the data, analysis and results of the tests carried out for the UV laser system in the Hg co-magnetometer of the n2EDM experiment
 
-In this repository you can currently find:
+#### Contents:
+
 - &#09989; Window Test
   - window stability: D, A, R
 - &#09989; Diode Test
@@ -18,7 +19,12 @@ In this repository you can currently find:
   - sensitivity map: D, A, R
 
 Legend: D-data, A-analysis, R-results
-
 Large datasets are compressed using the LZMA algorithm and saved as .xz files
+
+#### Running the analysis:
+
+1. Install and open the directory for the investigation to be analysed
+   
+
 
 Last updated: 07.09.2023
