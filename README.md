@@ -85,14 +85,14 @@
 1. Install the xz package
 2. cd into the Data subdirectory
 3. decompress all data with
-  ```console
-  xz -d -v -T0 *.xz
-  ```
+```console
+xz -d -v -T0 *.xz
+```
 4. set the extension to .txt
-   ```console
-   for file in *;
-     mv -- "$file" "${file%}.txt"
-   ```
+```console
+for file in *;
+  mv -- "$file" "${file%}.txt"
+```
 
 #### Running the analysis:
 - The analysis Python scripts are designed mainly to be executed from terminal
