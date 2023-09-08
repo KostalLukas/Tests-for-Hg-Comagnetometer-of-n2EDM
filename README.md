@@ -107,8 +107,8 @@ for file in *;
   - Fiber DAQ Analysis.py: data SPLOT Pth LPF fc
  
 - Arguments and their datatypes explained:
-  - data - str - filename without extension of data to be analysed in the Data subdirectory
-  - ACAL - bool - automatically recognise and calibrate the photodiodes tested
+  - 'data' - str - filename without extension of data to be analysed in the Data subdirectory
+  - 'ACAL' - bool - automatically recognise and calibrate the photodiodes tested
   - SPLOT - bool - subsample measurements to 1000 before plotting to save time and memory
   - LPF - bool - apply a low pass Butterworth filter
   - fc - float or str - cutoff frequency in Hz of the low pass Butterworth filter
