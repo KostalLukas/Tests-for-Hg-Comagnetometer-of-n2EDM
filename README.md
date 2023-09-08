@@ -16,23 +16,23 @@ Numerical results are saved as .txt or sometimes .csv files and the plots ae sim
 - Window Test
   - UV window transmission
     - Analysis script is Window Analysis.py
-    - Data is saved as Window_*timestamp*_W *window no*_*optional type of test*.txt
-    - Timestamp has the format *mmddhh* and denotes the start of data taking
+    - Data is saved as Window_(timestamp)_W(window no)_(optional type of test).txt
+    - Timestamp has the format mmddhh and denotes the start of data taking
     - Windows are numbered 1-9 as shown in UV_windows.csv
     - Additionally VAC means window has been degassed in a vacuum chamber prior to measurement
 
 - Diode Test
   - Diode comparison
     - Analysis script is Diode Comparison Analysis.py
-    - Data is saved as Diode_D*diode no*.txt
+    - Data is saved as Diode_D(diode no).txt
     - Diodes are numbered 1-8 as shown in Photo_diodes.csv
     - Analysis script compares the sensitivity and stability of the photodiodes measured directly at the output of the
       lser without power stabilisation
     - This generates the calibration for each photodiode with the gain of Ch1 on the DAQ
   - Diode tests
     - Analysis script is Diode Analysis.py
-    - Data is saved as Diode_*timestamp*_D*Ch1 diode no*_D*Ch2 diode no*_*type of test*.txt
-    - Timestamp has the format *mmddhh* and denotes the start of data taking
+    - Data is saved as Diode_(timestamp)_D(Ch1 diode no)_D(Ch2 diode no)_(type of test).txt
+    - Timestamp has the format mmddhh and denotes the start of data taking
     - The analysis script automatically recognizes the photodiode number and loads the calibration and associated error
           from the oputput of Diode Comparison Analysis.py accounting for the different gains on Ch1 and Ch2
 
@@ -50,11 +50,12 @@ Numerical results are saved as .txt or sometimes .csv files and the plots ae sim
     - It also calcualtes an average photodiode calibration constants and associated error
   - Fiber DAQ measurements
     - Analysis script is DAQ Analysis.py
-    - Data from DAQ is saved as UV_new10m_*date*_*time*.txt be aware some of the data is very large
+    - Data from DAQ is saved as UV_new10m_(date)_(time).txt be aware some of the data is very large
+    - The date and time specify the time at which the data has been downlaoded from the DAQ system
     - The analysis script loads the phodiode calibration constants and associated error calcualted by PM Analysis.py
   - Fiber power ramp
     - Analysis script is Rampup 1 Analysis.py and Rampup 2 Analysis.py
-    - Data is saved as Fiber_*timestamp*_Ru_*1 or 2*.csv
+    - Data is saved as Fiber_(timestamp)_Ru_(1 or 2).csv
     - Data no 1 was collected by increasing Vmod to increase power and recoding the DAQ reading and also taking PM measurements
       every 0.5V
       Data no 2 was collected by increasing the power and measuring only the fiber input power using the PM then repeating the
