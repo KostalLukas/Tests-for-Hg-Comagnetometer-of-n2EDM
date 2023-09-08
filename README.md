@@ -111,7 +111,7 @@ for file in *;
   - ACAL - bool - automatically recognise and calibrate the photodiodes tested
   - SPLOT - bool - subsample measurements to 1000 before plotting to save time and memory
   - LPF - bool - apply a low pass Butterworth filter
-  - fc - float or str - cutoff frequency in HZ of the low pass Butterworth filter
+  - fc - float or str - cutoff frequency in Hz of the low pass Butterworth filter
   - Pth - float - threshd power in uW if either Ch1 or Ch2 power of measurement is below it is ignored
   - P - float - laser output power in uW at which data for the diode comparison was measured
     
