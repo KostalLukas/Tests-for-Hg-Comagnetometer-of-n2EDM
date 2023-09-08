@@ -1,5 +1,5 @@
-# Tests-for-Hg-Comagnetometer-of-n2EDM
-### Repository containing the data, analysis and results of the tests carried out for the UV laser system in the Hg co-magnetometer of the n2EDM experiment
+# Tests for the Hg Co-magnetometer of n2EDM experiment
+### Repository containing the data, analysis and results of the tests carried out for the UV laser system in the Hg co-magnetometer of the n2EDM experiment searching for the neutron electric dipole moment
 
 #### Organization:
 - Each investigation has its own directory in the main repository.
