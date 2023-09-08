@@ -12,12 +12,19 @@ import scipy.signal as ss
 import sys
 
 
+# ignore all warnings from numpy
+np.seterr(all="ignore")
+
+
 # function to read arguments from console
 def garg(*args):
     args = list(args)
     arg_sys = sys.argv
     for i in range(1, len(arg_sys)):
-        args[i-1] = type(args[i-1])(arg_sys[i])
+        if type(args[i-1]) == bool:
+            args[i-1] = arg_sys[i] == 'True'
+        else:
+            args[i-1] = type(args[i-1])(arg_sys[i])
     return args
 
 
@@ -168,8 +175,14 @@ R21_err = R21 * np.sqrt((P_err[1, :] / P_arr[1, :])**2 + (P_err[0, :] / P_arr[0,
 T = R21 * Rbs
 T_err = np.sqrt((R21_err / R21)**2 + (Rbs_err / Rbs)**2)
 
+np.nan_to_num(T, nan=0, posinf=0, neginf=0)
+np.nan_to_num(T_err, nan=0, posinf=0, neginf=0)
+
 R23 = P_arr[1, :] / P_arr[2, :]
 R23_err = R23 * np.sqrt((P_err[1, :] / P_arr[1, :])**2 + (P_err[2, :] / P_arr[2, :])**2)
+
+np.nan_to_num(R23, nan=0, posinf=0, neginf=0)
+np.nan_to_num(R23_err, nan=0, posinf=0, neginf=0)
 
 # print update on status
 print('calculating numerical results and errors')
@@ -303,6 +316,7 @@ labels = ['Ch1 (BS reflection)', 'Ch2 (window output)', 'Ch3 (internal FHG)']
 
 # parameters for plotting measured power
 fig1 = plt.figure(1)
+fig1.set_tight_layout(True)
 
 ax1 = fig1.add_subplot(111)
 ax2 = ax1.twinx()
@@ -325,6 +339,7 @@ plt.savefig(f'Output/{data}_P.png', dpi=300, bbox_inches='tight')
         
 # parameters for plotting power fluctuation
 fig2 = plt.figure(2)
+fig2.set_tight_layout(True)
 
 ax1 = fig2.add_subplot(111)
 ax2 = ax1.twinx()
@@ -348,6 +363,7 @@ plt.savefig(f'Output/{data}_fP.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting rate of power fluctuation
 fig3 = plt.figure(3)
+fig3.set_tight_layout(True)
 
 ax1 = fig3.add_subplot(111)
 ax2 = ax1.twinx()
@@ -370,7 +386,9 @@ plt.legend(handles= ax1.lines + ax2.lines, loc=(-0.1, 1.05), markerscale=20, nco
 plt.savefig(f'Output/{data}_dPdt.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting window transmission
-plt.figure(4)
+fig4 = plt.figure(4)
+fig4.set_tight_layout(True)
+
 plt.title(f'Window Transmission over Time \n Dataset: {data}')
 plt.xlabel('time $t$ (h)')
 plt.ylabel('transmission $T$ (unitless)')
@@ -383,7 +401,9 @@ plt.fill_between(th, T - T_err, T + T_err, color=colr[0], alpha=alph, linewidth=
 plt.savefig(f'Output/{data}_T.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting ratio of Ch2 to Ch3
-plt.figure(6)
+fig5 = plt.figure(5)
+fig5.set_tight_layout(True)
+
 plt.title(f'Ratio of Ch2 to Ch3 \n Dataset: {data}')
 plt.xlabel('time $t$ (h)')
 plt.ylabel('ratio $R_{23}$ (unitless)')
@@ -400,4 +420,3 @@ plt.show()
 
 # print update on status
 print('done')
-
