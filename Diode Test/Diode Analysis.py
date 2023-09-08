@@ -12,12 +12,19 @@ import scipy.fft as sf
 import sys
 
 
+# ignore all warnings from numpy
+np.seterr(all="ignore")
+
+
 # function to read arguments from console
 def garg(*args):
     args = list(args)
     arg_sys = sys.argv
     for i in range(1, len(arg_sys)):
-        args[i-1] = type(args[i-1])(arg_sys[i])
+        if type(args[i-1]) == bool:
+            args[i-1] = arg_sys[i] == 'True'
+        else:
+            args[i-1] = type(args[i-1])(arg_sys[i])
     return args
 
 
@@ -37,22 +44,37 @@ def butter_lp(arr, fs, fc, order):
     return arr
 
 
+# function to get symmetric twin y axis to allign y=0
+def set_scales(ax1, ax2):
+    
+    y1_min, y1_max = ax1.set_ylim()
+    y2_min, y2_max = ax2.set_ylim()
+    
+    y1_lim = np.maximum(-y1_min, y1_max) * 1.1
+    y2_lim = np.maximum(-y2_min, y2_max) * 1.1
+    
+    ax1.set_ylim(-y1_lim, y1_lim)
+    ax2.set_ylim(-y2_lim, y2_lim)
+    
+    return None
+
+
 # array of range settings on the DAQ
 # 2 => ±10V, 3 => ±5V, 4 => ±2.5V, 5 => ±1.25V
 ch_set = np.array([5, 5, 5])
 
+# if set to true calibration constants will be automatically loaded from comparison analysis
+ACAL = True
+
 # array of calibration constants and absolute errors in uWV^-1
-cal_arr = np.array([275.9, 345.5, 490.0])
-cal_err = np.array([13.8, 17.3, 20.0])
+cal_arr = np.array([0, 0, 286600])
+cal_err = np.array([0, 0, 14300])
 
 # sampling frequency in Hz
 fs = 10
 
 # cutoff frequency in Hz
 fc = 'm'
-
-# minimum threshold for fluctuation in power in uW
-P_th = 100
 
 # apply a low pass butterworth filter
 LPF = True
@@ -66,14 +88,17 @@ SPLOT = True
 # data to be analysed
 data = 'Diode_082909_D4_D6_Ls'
 
+# ratio of amplifier gains Gch2 / Gch1
+Rg = 1.332
+
 # get input parameters
-data, SPLOT, LPF, fc, FFT= garg(data, SPLOT, LPF, fc, FFT)
+data, ACAL, SPLOT, LPF, fc, FFT= garg(data, ACAL, SPLOT, LPF, fc, FFT)
 
 # map of DAQ channel voltage ranges in V
-ch_map = np.array([10, 5,2.5, 1.25])
+ch_map = np.array([10, 5, 2.5, 1.25])
 
 # print update on status
-print('reading data')
+print('loading data')
 
 # get identifier for the type of measurement
 mes = data[-2:]
@@ -100,6 +125,8 @@ if LPF == True:
             fc = 1 / 60
         if fc == 'h':
             fc = 1 / 3600
+    else:
+        fc = float(fc)
             
     # print update on status  
     print('calibrating and applying LPF')
@@ -107,6 +134,15 @@ else:
     fc = fs
     
     print('calibratng')
+
+# load the calibration constants
+if ACAL == True:
+    cals = np.loadtxt('Output/Comparison_results.csv', usecols=(0, 1, 2),  delimiter=',', skiprows=1, unpack=True)
+
+    cal_arr[0] = cals[1, cals[0, :] == pds[0]]
+    cal_err[0] = cals[1, cals[0, :] == pds[0]]
+    cal_arr[1] = cals[2, cals[0, :] == pds[1]] * Rg
+    cal_err[1] = cals[2, cals[0, :] == pds[1]] * Rg
 
 # arrays to hold measured power and absolute error in uW
 P_arr = np.zeros(V_arr.shape)
@@ -149,8 +185,14 @@ for i in range(0, 3):
 R21 = P_arr[1, :] / P_arr[0, :]
 R21_err = R21 * np.sqrt((P_err[1, :] / P_arr[1, :])**2 + (P_err[0, :] / P_arr[0, :])**2)
 
+np.nan_to_num(R21, nan=0, posinf=0, neginf=0)
+np.nan_to_num(R21_err, nan=0, posinf=0, neginf=0)
+
 R23 = P_arr[1, :] / P_arr[2, :]
 R23_err = R23 * np.sqrt((P_err[1, :] / P_arr[1, :])**2 + (P_err[2, :] / P_arr[2, :])**2)
+
+np.nan_to_num(R23, nan=0, posinf=0, neginf=0)
+np.nan_to_num(R23_err, nan=0, posinf=0, neginf=0)
 
 # check if hould do FFT
 if FFT == True:
@@ -226,25 +268,25 @@ tprint(f'dataset:             {data}')
 tprint()
 tprint(f'total time           = {th[-1]:.3f} h')
 tprint()
-tprint(f'Ch1 mean power       = {P_avg[0]:.4g} ± {P_avg_err[0]:.4g} uW')
-tprint(f'Ch2 mean power       = {P_avg[1]:.4g} ± {P_avg_err[1]:.4g} uW')
-tprint(f'Ch3 mean power       = {P_avg[2]:.4g} ± {P_avg_err[2]:.4g} uW')
+tprint(f'Ch1 mean power       = {P_avg[0]:#.4g} ± {P_avg_err[0]:#.4g} uW')
+tprint(f'Ch2 mean power       = {P_avg[1]:#.4g} ± {P_avg_err[1]:#.4g} uW')
+tprint(f'Ch3 mean power       = {P_avg[2]:#.4g} ± {P_avg_err[2]:#.4g} uW')
 tprint()
-tprint(f'Ch1 ptp power        = {P_ptp[0]:.4g} uW')
-tprint(f'Ch2 ptp power        = {P_ptp[1]:.4g} uW')
-tprint(f'Ch3 ptp power        = {P_ptp[2]:.4g} uW')
+tprint(f'Ch1 ptp power        = {P_ptp[0]:#.4g} uW')
+tprint(f'Ch2 ptp power        = {P_ptp[1]:#.4g} uW')
+tprint(f'Ch3 ptp power        = {P_ptp[2]:#.4g} uW')
 tprint()
-tprint(f'RMS Ch1 fluctuation  = {dP_rms[0]:4g} uW s^-1')
-tprint(f'RMS Ch2 fluctuation  = {dP_rms[1]:4g} uW s^-1')
-tprint(f'RMS Ch3 fluctuation  = {dP_rms[2]:4g} uW s^-1')
+tprint(f'Ch1 RMS dP/dt        = {dP_rms[0]:4g} uW s^-1')
+tprint(f'Ch2 RMS dP/dt        = {dP_rms[1]:4g} uW s^-1')
+tprint(f'Ch3 RMS dP/dt        = {dP_rms[2]:4g} uW s^-1')
 tprint()
-tprint(f'R21 mean             = {R21_avg:.4g} ± {R21_avg_err:.4g}')
-tprint(f'R21 PTP              = {R21_ptp:.4g}')
-tprint(f'R21 RMS fluctuation  = {dR21_rms:4g} uW s^-1')
+tprint(f'R21 mean             = {R21_avg:#.4g} ± {R21_avg_err:#.4g}')
+tprint(f'R21 ptp              = {R21_ptp:#.4g}')
+tprint(f'R21 RMS dR/dt        = {dR21_rms:4g} ± {dR21_rms_err:4g} uW s^-1')
 tprint()
-tprint(f'R23 mean             = {R23_avg:.4g} ± {R23_avg_err:.4g}')
-tprint(f'R23 PTP              = {R23_ptp:.4g}')
-tprint(f'R23 RMS fluctuation  = {dR23_rms:4g} uW s^-1')
+tprint(f'R23 mean             = {R23_avg:#.4g} ± {R23_avg_err:#.4g}')
+tprint(f'R23 ptp              = {R23_ptp:#.4g}')
+tprint(f'R23 RMS dR/dt        = {dR23_rms:4g} ± {dR23_rms_err:#.4g} uW s^-1')
 tprint()
 tprint()
 tprint(f'Ch1 cal              = {cal_arr[0]} ± {cal_err[0]} uWV^-1')
@@ -255,9 +297,9 @@ tprint(f'Ch1 range:             {ch_set[0]} => ±{ch_map[ch_set[0]-2]} V')
 tprint(f'Ch2 range:             {ch_set[1]} => ±{ch_map[ch_set[1]-2]} V')
 tprint(f'Ch3 range:             {ch_set[2]} => ±{ch_map[ch_set[2]-2]} V')
 tprint()
-tprint(f'sampling freq        = {fs:.4g} Hz')
+tprint(f'sampling freq        = {fs:#.4g} Hz')
 tprint(f'low pass filter      = {LPF}')
-tprint(f'cutoff freq          = {fc:.4g} Hz')
+tprint(f'cutoff freq          = {fc:#.4g} Hz')
 tprint(f'FFT Analysis         = {FFT}')
 
 # print update on status
@@ -285,98 +327,131 @@ if SPLOT == True:
 
 # colors for plotting
 colr = ['royalblue', 'orange', 'limegreen']
+lcolr = ['blue', 'orangered', 'green']
+
+# labels for plotting
+labels = [f'Ch1 D{pds[0]}', f'Ch2 D{pds[1]}', 'Ch3 FHG input']
 
 # transparency and line width for plotting error regions
-alph = 0.35
-lw = 1.2
+alph = 0.2
+lw = 1.8
 
 # parameters for plotting measured power
-plt.figure(1)
+fig1 = plt.figure(1)
+fig1.set_tight_layout(True)
+
+ax1 = fig1.add_subplot(111)
+ax2 = ax1.twinx()
+axs = [ax1, ax1, ax2]
+
 plt.title(f'Measured Power over Time \n Dataset: {data}', pad=40)
-plt.xlabel('time $t$ (h)')
-plt.ylabel('power $P$ ($\mu W$)')
+ax1.set_xlabel('time $t$ (h)')
+ax1.set_ylabel('power $P$ ($\mu W$)')
+ax2.set_ylabel('FHG input $P_{FHG}$ ($m W$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
-plt.grid()
+ax1.grid()
 
 for i in range(0, 3):
-    plt.plot(th, P_arr[i, :], c=colr[i], linewidth=lw, label=f'Ch{i+1} - D{pds[i]}')
-    plt.fill_between(th, P_arr[i, :] - P_err[i, :], P_arr[i, :] + P_err[i, :], \
+    axs[i].plot(th, P_arr[i, :], c=lcolr[i], label=labels[i], linewidth=lw)
+    axs[i].fill_between(th, P_arr[i, :] - P_err[i, :], P_arr[i, :] + P_err[i, :], \
                      color=colr[i], alpha=alph)
-    
-plt.legend(loc=(0, 1.05), markerscale=20, ncol=3)
+
+plt.legend(handles= ax1.lines + ax2.lines, loc=(-0.1, 1.05), markerscale=20, ncol=3)
 plt.savefig(f'Output/{data}_P.png', dpi=300, bbox_inches='tight')
         
 # parameters for plotting power fluctuation
-plt.figure(2)
+fig2 = plt.figure(2)
+fig2.set_tight_layout(True)
+
+ax1 = fig2.add_subplot(111)
+ax2 = ax1.twinx()
+axs = [ax1, ax1, ax2]
+
 plt.title(f'Power Fluctuation over Time \n Dataset: {data}', pad=40)
-plt.xlabel('time $t$ (h)')
-plt.ylabel('power fluctuation $\Delta P$ ($\mu W$)')
+ax1.set_xlabel('time $t$ (h)')
+ax1.set_ylabel('power fluctuation $\Delta P$ ($\mu W$)')
+ax2.set_ylabel('FHG inout fluctuation $\Delta P_{FHG}$ ($m W$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
-plt.grid()
+ax1.grid()
 
 for i in range(0, 3):
-    plt.plot(th, fP_arr[i, :], c=colr[i], linewidth=lw, label=f'Ch{i+1} - D{pds[i]}')
-    plt.fill_between(th, fP_arr[i, :] - fP_err[i, :], fP_arr[i, :] + fP_err[i, :], \
+    axs[i].plot(th, fP_arr[i, :], c=lcolr[i], label=labels[i], linewidth=lw)
+    axs[i].fill_between(th, fP_arr[i, :] - fP_err[i, :], fP_arr[i, :] + fP_err[i, :], \
                      color=colr[i], alpha=alph)
 
-plt.legend(loc=(0, 1.05), markerscale=20, ncol=3)
+set_scales(ax1, ax2)
+plt.legend(handles= ax1.lines + ax2.lines, loc=(-0.1, 1.05), markerscale=20, ncol=3)
 plt.savefig(f'Output/{data}_fP.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting rate of power fluctuation
-plt.figure(3)
+fig3 = plt.figure(3)
+fig3.set_tight_layout(True)
+
+ax1 = fig3.add_subplot(111)
+ax2 = ax1.twinx()
+axs = [ax1, ax1, ax2]
+
 plt.title(f'Rate of Power Fluctuation over Time \n Dataset: {data}', pad=40)
-plt.xlabel('time $t$ (h)')
-plt.ylabel('rate of power fluctuation $dP/dt$ ($\mu W s^-1$)')
+ax1.set_xlabel('time $t$ (h)')
+ax1.set_ylabel('rate of power fluctuation $dP/dt$ ($\mu W s^-1$)')
+ax2.set_ylabel('FHG input rate of fluctuation $dP_{FHG}/dt$ ($m W s^-1$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
-plt.grid()
+ax1.grid()
 
 for i in range(0, 3):
-    plt.plot(th, dP_arr[i, :], c=colr[i], linewidth=lw, label=f'Ch{i+1} - D{pds[i]}')
-    plt.fill_between(th, dP_arr[i, :] - dP_err[i, :], dP_arr[i, :] + dP_err[i, :], \
-                     color=colr[i], alpha=alph)
-        
-plt.legend(loc=(0, 1.05), markerscale=20, ncol=3)
+    axs[i].plot(th, dP_arr[i, :], c=lcolr[i], label=labels[i], linewidth=lw)
+    axs[i].fill_between(th, dP_arr[i, :] - dP_err[i, :], dP_arr[i, :] + dP_err[i, :], \
+                     color=colr[i], alpha=alph)     
+
+set_scales(ax1, ax2)   
+plt.legend(handles= ax1.lines + ax2.lines, loc=(-0.1, 1.05), markerscale=20, ncol=3)
 plt.savefig(f'Output/{data}_dPdt.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting ratio of Ch2 to Ch1
-plt.figure(4)
+fig4 = plt.figure(4)
+fig4.set_tight_layout(True)
+
 plt.title(f'Ratio of Ch2 to Ch1 \n Dataset: {data}')
 plt.xlabel('time $t$ (h)')
 plt.ylabel('ratio $R_{21}$ (unitless)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
-plt.plot(th, R21, c=colr[0])
+plt.plot(th, R21, c=lcolr[0])
 plt.fill_between(th, R21 - R21_err, R21 + R21_err, color=colr[0], alpha=alph, linewidth=lw)
 
 plt.savefig(f'Output/{data}_R21.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting ratio of Ch2 to Ch3
-plt.figure(5)
+fig5 = plt.figure(5)
+fig5.set_tight_layout(True)
+
 plt.title(f'Ratio of Ch2 to Ch3 \n Dataset: {data}')
 plt.xlabel('time $t$ (h)')
 plt.ylabel('ratio $R_{23}$ (unitless)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
-plt.plot(th, R23, c=colr[0])
+plt.plot(th, R23, c=lcolr[0])
 plt.fill_between(th, R23 - R23_err, R23 + R23_err, color=colr[0], alpha=alph, linewidth=lw)
 
 plt.savefig(f'Output/{data}_R23.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting rate of change of ratios
-plt.figure(6)
+fig6 = plt.figure(6)
+fig6.set_tight_layout(True)
+
 plt.title(f'Rate of Change of Ratios \n Dataset: {data}', pad=40)
 plt.xlabel('time $t$ (h)')
 plt.ylabel('rate of change $dR/dt$ ($s^{-1}$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
-plt.plot(th, dR21, c=colr[0])
+plt.plot(th, dR21, c=lcolr[0])
 plt.fill_between(th, dR21 - dR21_err, dR21 + dR21_err, color=colr[0], \
                  alpha=alph, linewidth=lw, label='ratio $R_{21}$')
 
-plt.plot(th, dR21, c=colr[1])
+plt.plot(th, dR23, c=lcolr[1])
 plt.fill_between(th, dR23 - dR23_err, dR23 + dR23_err, color=colr[1], \
                  alpha=alph, linewidth=lw, label='ratio $R_{23}$')
 
@@ -385,23 +460,24 @@ plt.savefig(f'Output/{data}_dRdt.png', dpi=300, bbox_inches='tight')
 
 if FFT == True:
     # parameters for plotting fft of both ratios
-    plt.figure(7)
+    fig7 = plt.figure(7)
+    fig7.set_tight_layout(True)
+    
     plt.title(f'log FFT Spectrum of Ratios \n Dataset: {data}', pad=40)
     plt.xlabel('frequency $f$ (Hz)')
     plt.ylabel('log amplitude $\log_{10}(\mathcal{F}(R))$ (unitless)')
     plt.rc('grid', linestyle=':', c='black', alpha=0.8)
     plt.grid()
     
-    plt.plot(fftf, lfftR23, c=colr[1])
-    plt.fill_between(fftf, lfftR23 - lfftR23_err, lfftR23 + lfftR23_err, \
-                     color=colr[1], alpha=alph, linewidth=lw, label='ratio $R_{23}$')
-    
-    plt.plot(fftf, lfftR21, c=colr[0])
+    plt.plot(fftf, lfftR21, c=lcolr[0])
     plt.fill_between(fftf, lfftR21 - lfftR21_err, lfftR21 + lfftR21_err, \
                      color=colr[0], alpha=alph, linewidth=lw, label='ratio $R_{21}$')
     
+    plt.plot(fftf, lfftR23, c=lcolr[1])
+    plt.fill_between(fftf, lfftR23 - lfftR23_err, lfftR23 + lfftR23_err, \
+                     color=colr[1], alpha=alph, linewidth=lw, label='ratio $R_{23}$')
+    
     plt.xlim(0, fc/2)
-    plt.ylim(np.amin(np.minimum(lfftR21, lfftR23)), np.amax(np.maximum(lfftR21, lfftR23)))
     plt.legend(loc=(0, 1.05), markerscale=20, ncol=2)
     plt.savefig(f'Output/{data}_FFT.png', dpi=300, bbox_inches='tight')
 

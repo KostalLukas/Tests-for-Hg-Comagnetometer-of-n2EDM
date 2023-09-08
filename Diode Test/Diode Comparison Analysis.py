@@ -11,12 +11,19 @@ import glob as gb
 import sys
 
 
+# ignore all warnings from numpy
+np.seterr(all="ignore")
+
+
 # function to read arguments from console
 def garg(*args):
     args = list(args)
     arg_sys = sys.argv
     for i in range(1, len(arg_sys)):
-        args[i-1] = type(args[i-1])(arg_sys[i])
+        if type(args[i-1]) == bool:
+            args[i-1] = arg_sys[i] == 'True'
+        else:
+            args[i-1] = type(args[i-1])(arg_sys[i])
     return args
 
     
@@ -73,8 +80,8 @@ for i in range(0, n_pds):
     # set all -ve measurements equal to 0
     V[V <= 0] = 0
     
-    # discrad fist and last 3 measurements and convert to V
-    V = V[3:-3] * 10
+    # discrad fist and last 3 measurements
+    V = V[3:-3]
     V[V <= 0] = 0
     
     # get no of measurements for given photodiode
@@ -99,7 +106,7 @@ for i in range(0, n_pds):
 plt.legend(loc=(-0.2, 1.05), ncol=n_pds)
 plt.savefig('Output/Comparison_pds.png', dpi=300, bbox_inches='tight')
 
-cal_arr = P / V_avg / ch_map[ch_set-2]
+cal_arr = P / (V_avg * ch_map[ch_set-2])
 cal_err = cal_arr * np.sqrt(P_err**2 + V_sem**2)
     
 # print the numerical results
@@ -109,13 +116,15 @@ open(file, 'w')
 tprint('diode, cal (uWV^-1), cal error (uWV^-1), V mean (V), V SEM (V), V ptp (V)')
 
 for i in range(0, len(pds)):
-    tprint(f'{pds[i]:.0f}, {cal_arr[i]:.1f}, {cal_arr[i]:.1f}, {V_avg[i]:.4g}, {V_sem[i]:.4g}, {V_ptp[i]:.4g}')
+    tprint(f'{pds[i]:.0f}, {cal_arr[i]:.1f}, {cal_err[i]:.1f}, {V_avg[i]:#.4g}, {V_sem[i]:#.4g}, {V_ptp[i]:#.4g}')
 
 # colors for plotting
 colr = ['royalblue', 'limegreen', 'orange']
 
 # parameters for plotting peak to peak voltage for each photodiode
-plt.figure(2)
+fig1 = plt.figure(1)
+fig1.set_tight_layout(True)
+
 plt.title('Peak-to-peak of DAQ Input Voltage')
 plt.xlabel('photodiode no.')
 plt.ylabel('ptp voltage $V_{ptp}$ (V)')
@@ -126,7 +135,9 @@ plt.bar(pds, V_ptp, color=colr[0])
 plt.savefig('Output/Comparison_ptp.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting SEM of power for each photodiode
-plt.figure(3)
+fig2 = plt.figure(2)
+fig2.set_tight_layout(True)
+
 plt.title('Photodiode Calibration')
 plt.xlabel('photodiode no.')
 plt.ylabel('cal. constant $C$ ($\mu W V^{-1}$)')
@@ -137,7 +148,9 @@ plt.errorbar(pds, cal_arr, cal_err, marker='x', ls='none', capsize=5, c=colr[0])
 plt.savefig('Output/Comparison_cal.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting peak to peak voltage for each photodiode
-plt.figure(4)
+fig3 = plt.figure(3)
+fig3.set_tight_layout(True)
+
 plt.title('Error in Photodiode Calibration')
 plt.xlabel('photodiode no.')
 plt.ylabel('ptp voltage $V_{ptp}$ (V)')
