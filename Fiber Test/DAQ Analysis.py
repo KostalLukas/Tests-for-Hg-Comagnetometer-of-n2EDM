@@ -11,12 +11,19 @@ import scipy.signal as ss
 import sys
 
 
+# ignore all warnings from numpy
+np.seterr(all="ignore")
+
+
 # function to read arguments from console
 def garg(*args):
     args = list(args)
     arg_sys = sys.argv
     for i in range(1, len(arg_sys)):
-        args[i-1] = type(args[i-1])(arg_sys[i])
+        if type(args[i-1]) == bool:
+            args[i-1] = arg_sys[i] == 'True'
+        else:
+            args[i-1] = type(args[i-1])(arg_sys[i])
     return args
 
 
@@ -185,6 +192,9 @@ for i in range(0, n_ch):
 R21 = P_arr[1, :] / P_arr[0, :]
 R21_err = R21 * np.sqrt((P_err[1, :] / P_arr[1, :])**2 + (P_err[0, :] / P_arr[0, :])**2)
 
+np.nan_to_num(R21, nan=0, posinf=0, neginf=0)
+np.nan_to_num(R21_err, nan=0, posinf=0, neginf=0)
+
 # calcuate fiber trasnmission by accounting for beamsplitter ratio and associated error
 T = R21 * Rbs
 T_err = np.sqrt((R21_err / R21)**2 + (Rbs_err / Rbs)**2)
@@ -197,6 +207,9 @@ A_err = 10 / np.log(10) / R21 * R21_err / l * 1e-3
 if n_ch > 2:
     R23 = P_arr[1, :] / P_arr[2, :]
     R23_err = R23 * np.sqrt((P_err[1, :] / P_arr[1, :])**2 + (P_err[2, :] / P_arr[2, :])**2)
+    
+    np.nan_to_num(R21, nan=0, posinf=0, neginf=0)
+    np.nan_to_num(R21_err, nan=0, posinf=0, neginf=0)
 
 # rate of change of fiber transmision and associated error
 dT = np.diff(R21) / np.diff(t)
@@ -331,6 +344,7 @@ labels = ['Ch1 (BS reflection)', 'Ch2 (fiber output)', 'Ch3 (internal FHG)']
 
 # parameters for plotting measured power
 fig1 = plt.figure(1)
+fig1.set_tight_layout(True)
 
 ax1 = fig1.add_subplot(111)
 ax2 = ax1.twinx()
@@ -353,6 +367,7 @@ plt.savefig(f'Output/DAQ_{data}_P.png', dpi=300, bbox_inches='tight')
         
 # parameters for plotting power fluctuation
 fig2 = plt.figure(2)
+fig2.set_tight_layout(True)
 
 ax1 = fig2.add_subplot(111)
 ax2 = ax1.twinx()
@@ -379,6 +394,7 @@ plt.savefig(f'Output/DAQ_{data}_fP.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting rate of power fluctuation
 fig3 = plt.figure(3)
+fig3.set_tight_layout(True)
 
 ax1 = fig3.add_subplot(111)
 ax2 = ax1.twinx()
@@ -401,7 +417,9 @@ plt.legend(handles= ax1.lines + ax2.lines, loc=(-0.1, 1.05), markerscale=20, nco
 plt.savefig(f'Output/DAQ_{data}_dPdt.png', dpi=300, bbox_inches='tight')
         
 # parameters for plotting fiber transmission
-plt.figure(4)
+fig4 = plt.figure(4)
+fig4.set_tight_layout(True)
+
 plt.title(f'Fiber Transmission over Time \n Dataset: {data}')
 plt.xlabel('time $t$ (h)')
 plt.ylabel('transmission $T$ (unitless)')
@@ -414,7 +432,9 @@ plt.fill_between(th, T - T_err, T + T_err, color=colr[0], alpha=alph, linewidth=
 plt.savefig(f'Output/DAQ_{data}_T.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting rate of fiber transmission fluctuations
-plt.figure(5)
+fig5 = plt.figure(5)
+fig5.set_tight_layout(True)
+
 plt.title(f'Rate of Transmission Fluctuation over Time  \n Dataset: {data}')
 plt.xlabel('time $t$ (h)')
 plt.ylabel('transmission $dT/dt$ ($s^{-1}$)')
@@ -427,7 +447,9 @@ plt.fill_between(th, dT - dT_err, dT + dT_err, color=colr[0], alpha=alph, linewi
 plt.savefig(f'Output/DAQ_{data}_dTdt.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting ratio of Ch2 to Ch3
-plt.figure(6)
+fig6 = plt.figure(6)
+fig6.set_tight_layout(True)
+
 plt.title(f'Ratio of Ch2 to Ch3 \n Dataset: {data}')
 plt.xlabel('time $t$ (h)')
 plt.ylabel('ratio $R_{23}$ (unitless)')

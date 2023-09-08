@@ -10,6 +10,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
+# ignore all warnings from numpy
+np.seterr(all="ignore")
+
+
 # function to print to console and file simultaneously
 def tprint(text=''):
     print(text)
@@ -158,7 +162,9 @@ tprint('measured for D1 on Ch1 and D2 on Ch2')
 colr = ['royalblue', 'limegreen', 'orange', 'red']
 
 # parameters for plotting fiber transmission
-plt.figure(1)
+fig1 = plt.figure(1)
+fig1.set_tight_layout(True)
+
 plt.title('Fiber Transmission over Time', pad=40)
 plt.xlabel('time $t$ (h)')
 plt.ylabel(r'transmission $T$ (unitless)')
@@ -176,7 +182,9 @@ plt.legend(loc=(0.1, 1.05), ncol=3)
 plt.savefig('Output/PM_transmission.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting beam splitter ratio
-plt.figure(2)
+fig2 = plt.figure(2)
+fig2.set_tight_layout(True)
+
 plt.title('Beamsplitter Ratio over Time')
 plt.xlabel('time $t$ (h)')
 plt.ylabel('beamsplitter ratio $R_{R/T}$ (unitless)')
@@ -191,7 +199,9 @@ plt.savefig('Output/PM_beamsplitter.png', dpi=300, bbox_inches='tight')
 plt.show()
 
 # parameters for plotting total laser output power
-plt.figure(3)
+fig3 = plt.figure(3)
+fig3.set_tight_layout(True)
+
 plt.title('Total Laser Output Power over Time')
 plt.xlabel('time $t$ (h)')
 plt.ylabel('output power $P_{out}$ ($\mu W$)')
@@ -205,7 +215,9 @@ plt.errorbar(t, Ptot, yerr=Ptot_err, fmt='.', capsize=4, c=colr[0])
 plt.savefig('Output/PM_power.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting
-plt.figure(4)
+fig4 = plt.figure(4)
+fig4.set_tight_layout(True)
+
 plt.title('Photodiode Degradation over Time', pad=40)
 plt.xlabel('time $t$ (h)')
 plt.ylabel('$P_{DAQ} / P_{power \; meter}$ (unitless)')
