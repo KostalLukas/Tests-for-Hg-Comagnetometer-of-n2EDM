@@ -25,7 +25,7 @@
   - Diode comparison
     - Analysis script is Diode Comparison Analysis.py
     - Data is saved as Diode\_D(diode no).txt
-    - Diodes are numbered 1-8 as shown in Photo\_diodes.csv
+    - Diodes are numbered 1-8 as shown in UV\_diodes.txt
     - Analysis script compares the sensitivity and stability of the photodiodes measured directly at the output of the
       lser without power stabilisation
     - This generates the calibration for each photodiode with the gain of Ch1 on the DAQ
