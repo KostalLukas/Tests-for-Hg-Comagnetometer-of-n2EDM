@@ -101,22 +101,22 @@ for file in *;
 - The scripts are designed to read process arguments from terminal with which the script was executed
 
 - List of analysis scripts which take arguments:
-  - Window Analysis.py: data SPLOT LPF fc
-  - Diode Analysis.py: data ACAL SPLOT LPF fc FFT
-  - Diode Comparison Analysis.py: P
-  - Fiber DAQ Analysis.py: data SPLOT Pth LPF fc
+  - Window Analysis.py: `data SPLOT LPF fc`
+  - Diode Analysis.py: data `ACAL SPLOT LPF fc FFT`
+  - Diode Comparison Analysis.py:`P`
+  - Fiber DAQ Analysis.py: `data SPLOT Pth LPF fc`
  
 - Arguments and their datatypes explained:
-  - 'data' - str - filename without extension of data to be analysed in the Data subdirectory
-  - 'ACAL' - bool - automatically recognise and calibrate the photodiodes tested
-  - SPLOT - bool - subsample measurements to 1000 before plotting to save time and memory
-  - LPF - bool - apply a low pass Butterworth filter
-  - fc - float or str - cutoff frequency in Hz of the low pass Butterworth filter
-  - Pth - float - threshd power in uW if either Ch1 or Ch2 power of measurement is below it is ignored
-  - P - float - laser output power in uW at which data for the diode comparison was measured
+  - `data` - str - filename without extension of data to be analysed in the Data subdirectory
+  - `ACAL` - bool - automatically recognise and calibrate the photodiodes tested
+  - `SPLOT` - bool - subsample measurements to 1000 before plotting to save time and memory
+  - `LPF` - bool - apply a low pass Butterworth filter
+  - `fc` - float or str - cutoff frequency in Hz of the low pass Butterworth filter
+  - `Pth` - float - threshd power in uW if either Ch1 or Ch2 power of measurement is below it is ignored
+  - `P` - float - laser output power in uW at which data for the diode comparison was measured
     
-- For boolean arguments use 'True' or 'False' for fc use float or m for fc=1/1min or h for fc=1/1h
-- If no arguments are passed the scrypt defaults to preset arguments inside the script 
+- For boolean arguments use 'True' or 'False' for fc use a value or 'm' for fc=1/1min or 'h' for fc=1/1h
+- If no arguments are passed the scrypt defaults to preset arguments sepcified inside the script
 
 
 Last updated: 08.09.2023
