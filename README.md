@@ -102,7 +102,7 @@ for file in *;
 
 - List of analysis scripts which take arguments:
   - Window Analysis.py: `data SPLOT LPF fc`
-  - Diode Analysis.py: data `ACAL SPLOT LPF fc FFT`
+  - Diode Analysis.py: `data ACAL SPLOT LPF fc FFT`
   - Diode Comparison Analysis.py:`P`
   - Fiber DAQ Analysis.py: `data SPLOT Pth LPF fc`
  
