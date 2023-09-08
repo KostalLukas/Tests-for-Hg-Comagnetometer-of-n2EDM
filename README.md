@@ -2,15 +2,15 @@
 ### Repository containing the data, analysis and results of the tests carried out for the UV laser system in the Hg co-magnetometer of the n2EDM experiment
 
 #### Organization:
-Each investigation has its own directory in the main repository.
-Each directory contains the Python analysis scripts as well as a Data and Output subdirectories.
-The Data subdrectory contains all of the datasets collected for the particular investigation.
-Data collected using the DAQ system is saved as .txt while data collected manually is saved as .csv
-Large data files have been individually compressed into .xz files
-Different types of tests are specified with a 2 letters as follows:
+- Each investigation has its own directory in the main repository.
+- Each directory contains the Python analysis scripts as well as a Data and Output subdirectories.
+- The Data subdrectory contains all of the datasets collected for the particular investigation.
+- Data collected using the DAQ system is saved as .txt while data collected manually is saved as .csv
+- Large data files have been individually compressed into .xz files
+- Different types of tests are specified with a 2 letters as follows:
   Ls - long term stability, St - short test, Ru - power rampup, Rd - power rampdown, Sr - step response
-The Output directory contains an example output generated the Python analysis scipts
-Numerical results are saved as .txt or sometimes .csv files and the plots ae simply saved as .png
+- The Output directory contains an example output generated the Python analysis scipts
+- Numerical results are saved as .txt or sometimes .csv files and the plots ae simply saved as .png
 
 #### Investigations:
 - Window Test
@@ -78,17 +78,44 @@ Numerical results are saved as .txt or sometimes .csv files and the plots ae sim
     - The analysis script plots a heat map characterising the sensitivity across the photodiode active area as well as a standard devaition
       which can be used as the absolute error for all PM measureaments
 
-
-
-Legend: D-data, A-analysis, R-results
-Large datasets are compressed using the LZMA algorithm and saved as .xz files
+#### Decompressing the data
+- Large datasets are compressed using the LZMA algorith with maximum compression ratio and saved as .xz files
+- On Windows the files can be decompressed using the WinZip or 7-Zip utilities
+- On Linux or MacOS files can be decompressed using the xz package
+  1. Install the xz package
+  2. cd into the Data subdirectory
+  3. decompress all data with
+    ```console
+     xz -d -v -T0 *.xz
+    ```
+  4. set the extension to .txt
+     ```console
+     for file in *;
+     mv -- "$file" "${file%}.txt"
+     ```
 
 #### Running the analysis:
+- The analysis Python scripts are designed mainly to be executed from terminal
+- The scripts utilise the following packages which have to be installed
+  NumPy, matplotlib, SciPy, sys
+- The scripts are designed to read process arguments from terminal with which the script was executed
 
-1. Download and open the directory for the experiment to be analysed.
-2. If the data in the 
-1. Install and open the directory for the investigation to be analysed
+- List of analysis scripts which take arguments:
+  - Window Analysis.py: data SPLOT LPF fc
+  - Diode Analysis.py: data ACAL SPLOT LPF fc FFT
+  - Diode Comparison Analysis.py: P
+  - Fiber DAQ Analysis.py: data SPLOT Pth LPF fc
+ 
+- Arguments and their datatypes explained:
+  - data - str - filename without extension of data to be analysed in the Data subdirectory
+  - ACAL - bool - automatically recognise and calibrate the photodiodes tested
+  - SPLOT - bool - subsample measurements to 1000 before plotting to save time and memory
+  - LPF - bool - apply a low pass Butterworth filter
+  - fc - float or str - cutoff frequency in HZ of the low pass Butterworth filter
+  - Pth - float - threshd power in uW if either Ch1 or Ch2 power of measurement is below it is ignored
+  - P - float - laser output power in uW at which data for the diode comparison was measured
+    
+- For boolean arguments use 'True' or 'False' for fc use float or m for fc=1/1min or h for fc=1/1h
+- If no arguments are passed the scrypt defaults to preset arguments inside the script 
    
-
-
-Last updated: 07.09.2023
+Last updated: 08.09.2023
