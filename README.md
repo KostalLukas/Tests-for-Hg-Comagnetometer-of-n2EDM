@@ -82,17 +82,17 @@
 - Large datasets are compressed using the LZMA algorith with maximum compression ratio and saved as .xz files
 - On Windows the files can be decompressed using the WinZip or 7-Zip utilities
 - On Linux or MacOS files can be decompressed using the xz package
-  1. Install the xz package
-  2. cd into the Data subdirectory
-  3. decompress all data with
-    ```console
-     xz -d -v -T0 *.xz
-    ```
-  4. set the extension to .txt
-     ```console
-     for file in *;
+1. Install the xz package
+2. cd into the Data subdirectory
+3. decompress all data with
+  ```console
+  xz -d -v -T0 *.xz
+  ```
+4. set the extension to .txt
+   ```console
+   for file in *;
      mv -- "$file" "${file%}.txt"
-     ```
+   ```
 
 #### Running the analysis:
 - The analysis Python scripts are designed mainly to be executed from terminal
@@ -117,5 +117,7 @@
     
 - For boolean arguments use 'True' or 'False' for fc use float or m for fc=1/1min or h for fc=1/1h
 - If no arguments are passed the scrypt defaults to preset arguments inside the script 
-   
+
+
 Last updated: 08.09.2023
+By Lukas Kostal
