@@ -151,9 +151,9 @@ plt.savefig('Output/Comparison_cal.png', dpi=300, bbox_inches='tight')
 fig3 = plt.figure(3)
 fig3.set_tight_layout(True)
 
-plt.title('Error in Photodiode Calibration')
+plt.title('Uncertainty in Photodiode Calibration')
 plt.xlabel('photodiode no.')
-plt.ylabel('ptp voltage $V_{ptp}$ (V)')
+plt.ylabel('uncertainty $\delta C$ ($\mu V^{-1}$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
