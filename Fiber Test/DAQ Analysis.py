@@ -88,7 +88,7 @@ SPLOT = True
 l = 10
 
 # data to be analysed
-data = 'UV_new10m_0809_14_42'
+data = 'UV_new10m_0802_11_08'
 
 # get input parameters
 data, SPLOT, P_th, LPF, fc = garg(data, SPLOT, P_th, LPF, fc)
