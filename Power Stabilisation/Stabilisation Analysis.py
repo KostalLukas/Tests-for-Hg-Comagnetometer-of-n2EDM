@@ -11,14 +11,19 @@ import scipy.interpolate as si
 import sys
 
 
+# ignore all warnings from numpy
+np.seterr(all="ignore")
+
+
 # function to read arguments from console
 def garg(*args):
     args = list(args)
     arg_sys = sys.argv
-    
     for i in range(1, len(arg_sys)):
-        args[i-1] = type(args[i-1])(arg_sys[i])
-        
+        if type(args[i-1]) == bool:
+            args[i-1] = arg_sys[i] == 'True'
+        else:
+            args[i-1] = type(args[i-1])(arg_sys[i])
     return args
 
 
@@ -135,7 +140,9 @@ if len(vals) == 3:
     tprint(f'Pset_min   = {Iset_min:.4g} uW')
 
     # parameters for plotting TA current against modulation voltage
-    plt.figure(1)
+    fig1 = plt.figure(1)
+    fig1.set_tight_layout(True)
+
     plt.title('TA Current against Modulation Voltage')
     plt.xlabel('voltage $V{mod}$ (V)')
     plt.ylabel('TA current $I_{act}$ (mA)')
@@ -148,7 +155,9 @@ if len(vals) == 3:
     plt.savefig('Output/Modulation_VI.png', dpi=300, bbox_inches='tight')
     
     # parameters for plotting
-    plt.figure(2)
+    fig2 = plt.figure(2)
+    fig2.set_tight_layout(True)
+    
     plt.title('Output Power against Modulation Voltage')
     plt.xlabel('voltage $V_{mod}$ (V)')
     plt.ylabel('output power $P$ ($\mu W$)')
@@ -161,32 +170,35 @@ if len(vals) == 3:
     plt.savefig('Output/Modulation_VP.png', dpi=300, bbox_inches='tight')
     
     # parameters for plotting output power against TA current
-    plt.figure(3)
+    fig3 = plt.figure(3)
+    fig3.set_tight_layout(True)
+    
     plt.title('Output Power against TA Current', pad=40)
     plt.xlabel('TA current $I_{act}$ (mA)')
     plt.ylabel('output power $P$ ($\mu W$)')
     plt.rc('grid', linestyle=':', c='black', alpha=0.8)
     plt.grid()
 
-    plt.errorbar(I, P, yerr=Perr, fmt='x', capsize=3, c=colr[0])
-    plt.axvline(Iact_max, ls='--', c=colr[0])
-    plt.axvline(Iact_min, ls='--', c=colr[0])
-    plt.axhline(Pact_max, ls='--', c=colr[0])
-    plt.axhline(Pact_min, ls='--', c=colr[0])
+    plt.errorbar(I, P, yerr=Perr, fmt='x', capsize=3, c=colr[0], \
+                 label='measurement')
+    plt.axvline(Iact_max, lw=1.2, c=colr[0])
+    plt.axvline(Iact_min, lw=1.2, c=colr[0])
+    plt.axhline(Pact_max, lw=1.2, c=colr[0])
+    plt.axhline(Pact_min, lw=1.2, c=colr[0])
     plt.fill_between([Iact_min, Iact_max], [Pact_min, Pact_min], \
                      [Pact_max, Pact_max], color=colr[0], alpha=0.2, \
-                     label='acrual modulation region')
+                     label='actual mod. region')
     
-    plt.axvline(Iset_max, ls='--', c=colr[3])
-    plt.axvline(Iset_min, ls='--', c=colr[3])
-    plt.axhline(Pset_max, ls='--', c=colr[3])
-    plt.axhline(Pset_min, ls='--', c=colr[3])
+    plt.axvline(Iset_max, lw=1.2, c=colr[3])
+    plt.axvline(Iset_min, lw=1.2, c=colr[3])
+    plt.axhline(Pset_max, lw=1.2, c=colr[3])
+    plt.axhline(Pset_min, lw=1.2, c=colr[3])
     plt.fill_between([Iset_min, Iset_max], [Pset_min, Pset_min], \
                      [Pset_max, Pset_max], color=colr[3], alpha=0.2, \
-                     label='desired modulation region')
+                     label='desired mod. region')
 
     # save plot
-    plt.legend(loc=(0, 1.05), ncol=2)
+    plt.legend(loc=(-0.1, 1.05), ncol=3)
     plt.savefig('Output/Modulation_IP.png', dpi=300, bbox_inches='tight')
 
     # show the plots
@@ -195,7 +207,9 @@ if len(vals) == 3:
 else:
     
     # parameters for plotting output power against TA current
-    plt.figure(1)
+    fig1 = plt.figure(1)
+    fig1.set_tight_layout(True)
+    
     plt.title('Output Power against TA Current')
     plt.xlabel('TA current $Iact$ (mA)')
     plt.ylabel('output power $P$ ($\mu W$)')
