@@ -56,7 +56,7 @@ sens = 200
 data, Pset, Iact, Vmac, Vmin = garg(data, Pset, Iact, Vmax, Vmin)
 
 # specify colors for plotting
-colr = ['royalblue', 'limegreen', 'orange', 'red']
+colr = ['royalblue', 'green', 'orange', 'red']
 
 # load the data
 vals = np.loadtxt(f'Data/{data}.csv', unpack=True, delimiter=',', skiprows=1)
@@ -144,12 +144,12 @@ if len(vals) == 3:
     fig1.set_tight_layout(True)
 
     plt.title('TA Current against Modulation Voltage')
-    plt.xlabel('voltage $V{mod}$ (V)')
+    plt.xlabel('modulation voltage $V{mod}$ (V)')
     plt.ylabel('TA current $I_{act}$ (mA)')
     plt.rc('grid', linestyle=':', c='black', alpha=0.8)
     plt.grid()
     
-    plt.plot(V, I, c=colr[1])
+    plt.plot(V, I, 'x', c=colr[1])
 
     # save plot
     plt.savefig('Output/Modulation_VI.png', dpi=300, bbox_inches='tight')
@@ -159,7 +159,7 @@ if len(vals) == 3:
     fig2.set_tight_layout(True)
     
     plt.title('Output Power against Modulation Voltage')
-    plt.xlabel('voltage $V_{mod}$ (V)')
+    plt.xlabel('modulation voltage $V_{mod}$ (V)')
     plt.ylabel('output power $P$ ($\mu W$)')
     plt.rc('grid', linestyle=':', c='black', alpha=0.8)
     plt.grid()
