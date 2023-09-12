@@ -1,0 +1,37 @@
+dataset:             Diode_090118_D4_D6_Ls
+
+total time           = 62.303 h
+
+Ch1 mean power       = 138.7 ± 6.713 uW
+Ch2 mean power       = 230.2 ± 11.41 uW
+Ch3 mean power       = 5.412e+04 ± 2701. uW
+
+Ch1 ptp power        = 154.7 uW
+Ch2 ptp power        = 257.0 uW
+Ch3 ptp power        = 7.628e+04 uW
+
+Ch1 RMS dP/dt        = 28.4496 uW s^-1
+Ch2 RMS dP/dt        = 47.1878 uW s^-1
+Ch3 RMS dP/dt        = 10926.6 uW s^-1
+
+R21 mean             = 1.659 ± 0.1149
+R21 ptp              = 20.84
+R21 RMS dR/dt        = 0.449825 ± 0.000517115 uW s^-1
+
+R23 mean             = 0.004254 ± 0.0002991
+R23 ptp              = 0.05035
+R23 RMS dR/dt        = 0.000966643 ± 1.089e-06 uW s^-1
+
+
+Ch1 cal              = 248 ± 12 uWV^-1
+Ch2 cal              = 323 ± 16 uWV^-1
+Ch3 cal              = 286600 ± 14300 uWV^-1
+
+Ch1 range:             5 => ±1.25 V
+Ch2 range:             5 => ±1.25 V
+Ch3 range:             5 => ±1.25 V
+
+sampling freq        = 10.00 Hz
+low pass filter      = False
+cutoff freq          = 10.00 Hz
+FFT Analysis         = False
