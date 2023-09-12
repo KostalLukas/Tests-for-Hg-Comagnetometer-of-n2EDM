@@ -192,8 +192,8 @@ for i in range(0, n_ch):
 R21 = P_arr[1, :] / P_arr[0, :]
 R21_err = R21 * np.sqrt((P_err[1, :] / P_arr[1, :])**2 + (P_err[0, :] / P_arr[0, :])**2)
 
-np.nan_to_num(R21, nan=0, posinf=0, neginf=0)
-np.nan_to_num(R21_err, nan=0, posinf=0, neginf=0)
+R21 = np.nan_to_num(R21, nan=0, posinf=0, neginf=0)
+R21_err = np.nan_to_num(R21_err, nan=0, posinf=0, neginf=0)
 
 # calcuate fiber trasnmission by accounting for beamsplitter ratio and associated error
 T = R21 * Rbs
@@ -208,8 +208,8 @@ if n_ch > 2:
     R23 = P_arr[1, :] / P_arr[2, :]
     R23_err = R23 * np.sqrt((P_err[1, :] / P_arr[1, :])**2 + (P_err[2, :] / P_arr[2, :])**2)
     
-    np.nan_to_num(R21, nan=0, posinf=0, neginf=0)
-    np.nan_to_num(R21_err, nan=0, posinf=0, neginf=0)
+    R23 = np.nan_to_num(R21, nan=0, posinf=0, neginf=0)
+    R23_err = np.nan_to_num(R21_err, nan=0, posinf=0, neginf=0)
 
 # rate of change of fiber transmision and associated error
 dT = np.diff(R21) / np.diff(t)
@@ -324,6 +324,7 @@ if SPLOT == True:
     R23 = R23[::sval]
     R23_err = R23_err[::sval]
 
+# internal FHG power plotted in mW so convert uW to mW
 P_arr[2] *= 1e-3
 P_err[2] *= 1e-3
 fP_arr[2] *= 1e-3
