@@ -44,20 +44,25 @@ ch_set = 2
 
 # ampling frequency in Hz
 fs = 10
-        
+
+# resistance of feedback resistor in transimpedance amplifier in ohm
+Rf = 14.97 * 1e3
+Rf_err = 0.016 *1e3
+
 P = garg(P)[0]
 
 # get a sorted list of all datasets in the Data directory
 ds = gb.glob('Data/Diode_D**.txt')
 ds.sort()
 
+# no of photodiodes
 n_pds = len(ds)
 
 # map of DAQ channel voltage ranges in V
 ch_map = np.array([10, 5, 2.5, 1.25])
 
 # empty arrays to hold results for each diode
-pds = np.zeros(n_pds)
+pds = np.zeros(n_pds, dtype=int)
 V_avg = np.zeros(n_pds)
 V_std = np.zeros(n_pds)
 V_sem = np.zeros(n_pds)
@@ -72,7 +77,7 @@ plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
     
 for i in range(0, n_pds):
-    pds[i] = int(ds[i][-5])
+    pds[i] = ds[i][-5]
     
     # load the data for the given photodiode
     V = np.genfromtxt(ds[i], usecols=(0), unpack=True, delimiter=',')
@@ -108,6 +113,15 @@ plt.savefig('Output/Comparison_pds.png', dpi=300, bbox_inches='tight')
 
 cal_arr = P / (V_avg * ch_map[ch_set-2])
 cal_err = cal_arr * np.sqrt(P_err**2 + V_sem**2)
+
+sens_arr = 1 / Rf / cal_arr
+sens_err = sens_arr * np.sqrt((Rf_err / Rf)**2 + (cal_err / cal_arr)**2)
+
+cal_avg = np.mean(cal_arr)
+cal_avg_err = np.sqrt(np.sum(cal_err**2) / n_pds)
+
+sens_avg = np.mean(sens_arr) * 1e6
+sens_avg_err = np.sqrt(np.sum(sens_err**2) / n_pds) * 1e6
     
 # print the numerical results
 file = 'Output/Comparison_results.csv'
@@ -117,6 +131,9 @@ tprint('diode, cal (uWV^-1), cal error (uWV^-1), V mean (V), V SEM (V), V ptp (V
 
 for i in range(0, len(pds)):
     tprint(f'{pds[i]:.0f}, {cal_arr[i]:.1f}, {cal_err[i]:.1f}, {V_avg[i]:#.4g}, {V_sem[i]:#.4g}, {V_ptp[i]:#.4g}')
+
+print(f'mean calibration = {cal_avg:#.4g} ± {cal_avg_err:#.4g} uWV^-1')
+print(f'mean sensitivity = {sens_avg:#.4g} ± {sens_avg_err:#.4g} AW^-1')
 
 # colors for plotting
 colr = ['royalblue', 'limegreen', 'orange']

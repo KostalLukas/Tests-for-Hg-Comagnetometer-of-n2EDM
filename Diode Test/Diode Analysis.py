@@ -86,7 +86,7 @@ FFT = True
 SPLOT = True
 
 # data to be analysed
-data = 'Diode_082909_D4_D6_Ls'
+data = 'Diode_090118_D4_D6_Ls'
 
 # ratio of amplifier gains Gch2 / Gch1
 Rg = 1.332
@@ -140,8 +140,8 @@ if ACAL == True:
     cals = np.loadtxt('Output/Comparison_results.csv', usecols=(0, 1, 2),  delimiter=',', skiprows=1, unpack=True)
 
     cal_arr[0] = cals[1, cals[0, :] == pds[0]]
-    cal_err[0] = cals[1, cals[0, :] == pds[0]]
-    cal_arr[1] = cals[2, cals[0, :] == pds[1]] * Rg
+    cal_err[0] = cals[2, cals[0, :] == pds[0]]
+    cal_arr[1] = cals[1, cals[0, :] == pds[1]] * Rg
     cal_err[1] = cals[2, cals[0, :] == pds[1]] * Rg
 
 # arrays to hold measured power and absolute error in uW
@@ -185,14 +185,14 @@ for i in range(0, 3):
 R21 = P_arr[1, :] / P_arr[0, :]
 R21_err = R21 * np.sqrt((P_err[1, :] / P_arr[1, :])**2 + (P_err[0, :] / P_arr[0, :])**2)
 
-np.nan_to_num(R21, nan=0, posinf=0, neginf=0)
-np.nan_to_num(R21_err, nan=0, posinf=0, neginf=0)
+R21 = np.nan_to_num(R21, nan=0, posinf=0, neginf=0)
+R21_err = np.nan_to_num(R21_err, nan=0, posinf=0, neginf=0)
 
 R23 = P_arr[1, :] / P_arr[2, :]
 R23_err = R23 * np.sqrt((P_err[1, :] / P_arr[1, :])**2 + (P_err[2, :] / P_arr[2, :])**2)
 
-np.nan_to_num(R23, nan=0, posinf=0, neginf=0)
-np.nan_to_num(R23_err, nan=0, posinf=0, neginf=0)
+R23 = np.nan_to_num(R23, nan=0, posinf=0, neginf=0)
+R23_err = np.nan_to_num(R23_err, nan=0, posinf=0, neginf=0)
 
 # check if hould do FFT
 if FFT == True:
@@ -325,6 +325,14 @@ if SPLOT == True:
     dR23 = dR23[::sval]
     dR23_err = dR23_err[::sval]
 
+# internal FHG power plotted in mW so convert uW to mW
+P_arr[2] *= 1e-3
+P_err[2] *= 1e-3
+fP_arr[2] *= 1e-3
+fP_err[2] *= 1e-3
+dP_arr[2] *= 1e-3
+dP_err[2] *= 1e-3
+
 # colors for plotting
 colr = ['royalblue', 'orange', 'limegreen']
 lcolr = ['blue', 'orangered', 'green']
@@ -333,7 +341,7 @@ lcolr = ['blue', 'orangered', 'green']
 labels = [f'Ch1 D{pds[0]}', f'Ch2 D{pds[1]}', 'Ch3 FHG input']
 
 # transparency and line width for plotting error regions
-alph = 0.2
+alph = 0.3
 lw = 1.8
 
 # parameters for plotting measured power
@@ -380,7 +388,7 @@ for i in range(0, 3):
                      color=colr[i], alpha=alph)
 
 set_scales(ax1, ax2)
-plt.legend(handles= ax1.lines + ax2.lines, loc=(-0.1, 1.05), markerscale=20, ncol=3)
+plt.legend(handles= ax1.lines + ax2.lines, loc=(0, 1.05), markerscale=20, ncol=3)
 plt.savefig(f'Output/{data}_fP.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting rate of power fluctuation
@@ -404,7 +412,8 @@ for i in range(0, 3):
                      color=colr[i], alpha=alph)     
 
 set_scales(ax1, ax2)   
-plt.legend(handles= ax1.lines + ax2.lines, loc=(-0.1, 1.05), markerscale=20, ncol=3)
+plt.legend(handles= ax1.lines + ax2.lines, loc=(0, 1.05), markerscale=20, ncol=3)
+
 plt.savefig(f'Output/{data}_dPdt.png', dpi=300, bbox_inches='tight')
 
 # parameters for plotting ratio of Ch2 to Ch1
@@ -441,21 +450,26 @@ plt.savefig(f'Output/{data}_R23.png', dpi=300, bbox_inches='tight')
 fig6 = plt.figure(6)
 fig6.set_tight_layout(True)
 
+ax1 = fig6.add_subplot(111)
+ax2 = ax1.twinx()
+
 plt.title(f'Rate of Change of Ratios \n Dataset: {data}', pad=40)
-plt.xlabel('time $t$ (h)')
-plt.ylabel('rate of change $dR/dt$ ($s^{-1}$)')
+ax1.set_xlabel('time $t$ (h)')
+ax1.set_ylabel('rate of change of $R_{21}$ ($s^{-1}$)')
+ax2.set_ylabel('rate of change of $R_{23}$ ($s^{-1}$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
-plt.grid()
+ax1.grid()
 
-plt.plot(th, dR21, c=lcolr[0])
-plt.fill_between(th, dR21 - dR21_err, dR21 + dR21_err, color=colr[0], \
-                 alpha=alph, linewidth=lw, label='ratio $R_{21}$')
+ax1.plot(th, dR21, c=lcolr[0], label='ratio $R_{21}$')
+ax1.fill_between(th, dR21 - dR21_err, dR21 + dR21_err, color=colr[0], \
+                 alpha=alph, linewidth=lw)
 
-plt.plot(th, dR23, c=lcolr[1])
-plt.fill_between(th, dR23 - dR23_err, dR23 + dR23_err, color=colr[1], \
-                 alpha=alph, linewidth=lw, label='ratio $R_{23}$')
-
-plt.legend(loc=(0, 1.05), markerscale=20, ncol=2)
+ax2.plot(th, dR23, c=lcolr[1], label='ratio $R_{23}$')
+ax2.fill_between(th, dR23 - dR23_err, dR23 + dR23_err, color=colr[1], \
+                 alpha=alph, linewidth=lw)
+    
+set_scales(ax1, ax2)  
+plt.legend(handles=ax1.lines + ax2.lines, loc=(0, 1.05), ncol=2)
 plt.savefig(f'Output/{data}_dRdt.png', dpi=300, bbox_inches='tight')
 
 if FFT == True:
@@ -469,13 +483,13 @@ if FFT == True:
     plt.rc('grid', linestyle=':', c='black', alpha=0.8)
     plt.grid()
     
-    plt.plot(fftf, lfftR21, c=lcolr[0])
+    plt.plot(fftf, lfftR21, c=lcolr[0], label='ratio $R_{21}$')
     plt.fill_between(fftf, lfftR21 - lfftR21_err, lfftR21 + lfftR21_err, \
-                     color=colr[0], alpha=alph, linewidth=lw, label='ratio $R_{21}$')
+                     color=colr[0], alpha=alph, linewidth=lw)
     
-    plt.plot(fftf, lfftR23, c=lcolr[1])
+    plt.plot(fftf, lfftR23, c=lcolr[1], label='ratio $R_{23}$')
     plt.fill_between(fftf, lfftR23 - lfftR23_err, lfftR23 + lfftR23_err, \
-                     color=colr[1], alpha=alph, linewidth=lw, label='ratio $R_{23}$')
+                     color=colr[1], alpha=alph, linewidth=lw)
     
     plt.xlim(0, fc/2)
     plt.legend(loc=(0, 1.05), markerscale=20, ncol=2)
