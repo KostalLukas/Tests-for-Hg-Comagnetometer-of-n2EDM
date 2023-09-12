@@ -117,7 +117,7 @@ for file in *;
     
 - For boolean arguments use 'True' or 'False' for fc use a value or 'm' for fc=1/1min or 'h' for fc=1/1h
 - If no arguments are passed the scrypt defaults to preset arguments sepcified inside the script
-
+- When power threshold or low pass filter are set to 'False' still need to pass Pth or fc so pass any value eg. '0'
 
 Last updated: 08.09.2023
 By Lukas Kostal
