@@ -307,20 +307,24 @@ tprint(f'fiber length         = {l:.1f} m')
 print()
 print('plotting')
 
+# array of times for plotting time derivatives
+dth = th[1:]
+
 # if subsampling turned on subsample all of the original arrays
 if SPLOT == True:
     sval = int(n / 1000)
     th = th[::sval]
+    dth = dth[::sval]
     P_arr = P_arr[:, ::sval]
     P_err = P_err[:, ::sval]
     fP_arr = fP_arr[:, ::sval]
     fP_err = fP_err[:, ::sval]
-    dP_arr = dP_arr[:, ::sval]
-    dP_err = dP_err[:, ::sval]
+    dP_arr = dP_arr[:, ::sval-1]
+    dP_err = dP_err[:, ::sval-1]
     T = T[::sval]
     T_err = T_err[::sval]
-    dT = dT[::sval]
-    dT_err = dT_err[::sval]
+    dT = dT[::sval-1]
+    dT_err = dT_err[::sval-1]
     R23 = R23[::sval]
     R23_err = R23_err[::sval]
 
@@ -409,8 +413,8 @@ plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 ax1.grid()
 
 for i in range(0, n_ch):
-    axs[i].plot(th, dP_arr[i, :], c=lcolr[i], label=labels[i], linewidth=lw)
-    axs[i].fill_between(th, dP_arr[i, :] - dP_err[i, :], dP_arr[i, :] + dP_err[i, :], \
+    axs[i].plot(dth, dP_arr[i, :], c=lcolr[i], label=labels[i], linewidth=lw)
+    axs[i].fill_between(dth, dP_arr[i, :] - dP_err[i, :], dP_arr[i, :] + dP_err[i, :], \
                      color=colr[i], alpha=alph)     
 
 set_scales(ax1, ax2)   
@@ -442,8 +446,8 @@ plt.ylabel('transmission $dT/dt$ ($s^{-1}$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
-plt.plot(th, dT, c=lcolr[0])
-plt.fill_between(th, dT - dT_err, dT + dT_err, color=colr[0], alpha=alph, linewidth=lw)
+plt.plot(dth, dT, c=lcolr[0])
+plt.fill_between(dth, dT - dT_err, dT + dT_err, color=colr[0], alpha=alph, linewidth=lw)
 
 plt.savefig(f'Output/DAQ_{data}_dTdt.png', dpi=300, bbox_inches='tight')
 
