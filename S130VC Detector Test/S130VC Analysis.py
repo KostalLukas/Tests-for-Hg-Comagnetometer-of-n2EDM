@@ -51,10 +51,13 @@ def get_sem(P):
 data = "Sensitivity_map"
 
 # no of turns of adjustement screw on stage between measurements
-step = 2
+trn = 2
+
+# distance per revolution of the adjustement screw
+dpr = 0.5
 
 # threshold for numerical data and plotting
-th = 900
+th = 0
 
 # load data in mW and convert to uW
 P = np.loadtxt(f'Data/{data}.csv', unpack=True, delimiter=',', )
@@ -63,8 +66,8 @@ P *= 1e3
 # get no of measurements in x and y direction respectively
 nx, ny = np.size(P, 0), np.size(P, 1)
 
-# get relatie position of measurements
-x, y = step * np.arange(0, nx), step * np.arange(0, ny)
+# get relative position of measurements
+x, y = trn * dpr * np.arange(0, nx), trn * dpr * np.arange(0, ny)
 
 # array of thresholds for power in uW with 500 increments
 th_arr = np.linspace(np.amin(P), np.amax(P), 500)
@@ -116,8 +119,8 @@ plt.savefig('Output/threshold.png', dpi=300, bbox_inches='tight')
 # parameters for plotting heat map with optimsied threshold
 plt.figure(2)
 plt.title('Sensitivity Map of S130VC Detector Area')
-plt.xlabel('horizontal position $x$ (turns)')
-plt.ylabel('vertical position $y$ (turns)')
+plt.xlabel('horizontal position $x$ (mm)')
+plt.ylabel('vertical position $y$ (mm)')
 plt.gca().set_aspect('equal')
 plt.xticks(x)
 plt.yticks(y)
