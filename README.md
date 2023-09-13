@@ -97,7 +97,7 @@ for file in *;
 #### Running the analysis:
 - The analysis Python scripts are designed mainly to be executed from terminal
 - The scripts utilise the following packages which have to be installed
-  NumPy, matplotlib, SciPy, sys
+  NumPy, matplotlib, SciPy, pandas, sys
 - The scripts are designed to read process arguments from terminal with which the script was executed
 
 - List of analysis scripts which take arguments:
