@@ -14,10 +14,16 @@
 
 #### Investigations:
 - Window Test
+  - UV window comparison
+    - analysis script is Window Comparison Analysis.py
+    - Windows are numbered 1-9 as showin in UV-windows.csv
+    - beamsplitter ratios measured for each window test saved as Window_Rbs.csv
+    - the analysis script takes the first 9 datasets specified in Window_Rbs.csv and compares their
+      trnamsission correcting for the drift in beamsplitter ratio
   - UV window transmission
-    - Analysis script is Window Analysis.py
-    - Data is saved as Window\_(timestamp)\_W(window no)\_(optional type of test).txt
-    - Timestamp has the format mmddhh and denotes the start of data taking
+    - analysis script is Window Analysis.py
+    - data is saved as Window\_(timestamp)\_W(window no)\_(optional type of test).txt
+    - timestamp has the format mmddhh and denotes the start of data taking
     - Windows are numbered 1-9 as shown in UV_windows.csv
     - Additionally VAC means window has been degassed in a vacuum chamber prior to measurement
 
