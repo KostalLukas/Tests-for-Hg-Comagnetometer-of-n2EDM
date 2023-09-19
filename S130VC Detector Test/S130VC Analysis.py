@@ -40,14 +40,18 @@ def tprint(text=''):
 
 
 # function to apply threshold
-def get_treshold(P, th):
-    P_th = np.array(P)
+def get_treshold(P, Pth):
+    P = np.array(P)
+    
+    print(P) 
+    print()
+    print(Pth)
     
     for i in range(0, nx):
         for j in range(0, ny):
-            if P_th[i, j] < th:
-                P_th[i, j] = np.nan   
-    return P_th
+            if P[i, j] < Pth:
+                P[i, j] = np.nan   
+    return P
 
 
 # function to return average power
@@ -82,7 +86,7 @@ dpr = 0.5
 
 # set true to find optimised power threshold
 # doesnt work well so default is off
-THOPT = False
+THOPT = True
 
 parg('Pth')
 
@@ -105,8 +109,8 @@ sem_arr = np.zeros(len(Pth_arr))
 # loop over all possible thresholds to find one at which SEM is minimum
 if THOPT == True:
     for i in range(0, len(Pth_arr)):
-        Pth = get_treshold(P, Pth_arr[i])
-        sem_arr[i] = get_sem(Pth)
+        P_now = get_treshold(P, Pth_arr[i])
+        sem_arr[i] = get_sem(P_now)
 
 # optimised threshold doesnt really work for now
 Pthop = Pth_arr[np.argmin(sem_arr)]
@@ -161,7 +165,7 @@ if THOPT == True:
     plt.plot(Pth_arr, sem_arr, color='royalblue')
     
     # save plot
-    plt.savefig('Output/Pthop.png', dpi=300, bbox_inches='tight')
+    plt.savefig('Output/optimisation.png', dpi=300, bbox_inches='tight')
 
 # show plots
 plt.show()
