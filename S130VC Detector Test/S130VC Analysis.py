@@ -8,6 +8,27 @@ Lukas Kostal, 14.7.2023, PSI
 
 import numpy as np
 from matplotlib import pyplot as plt
+import sys
+
+
+# function to pass arguments from terminal
+def parg(arg_var):
+    arg_sys = sys.argv
+    
+    for i in range(1, len(arg_sys)):
+        arg_nam = arg_sys[i].split('=')[0]
+        arg_val = arg_sys[i].split('=')[1]
+        
+        if arg_val == 'm':
+            arg_val = 1/60
+        if arg_val == 'h':
+            arg_val = 1/3600
+        
+        if arg_nam in arg_var:
+            exec(f'{arg_nam} = {arg_val}', globals())
+        else:
+            print(f'{arg_nam} is not a valid variable')
+    return None
 
 
 # function to print to console and file simultaneously
@@ -47,6 +68,9 @@ def get_sem(P):
     return sem
 
 
+# threshold for numerical data and plotting
+Pth = 0
+
 # data to be analysed
 data = "Sensitivity_map"
 
@@ -56,8 +80,11 @@ trn = 2
 # distance per revolution of the adjustement screw
 dpr = 0.5
 
-# threshold for numerical data and plotting
-th = 0
+# set true to find optimised power threshold
+# doesnt work well so default is off
+THOPT = False
+
+parg('Pth')
 
 # load data in mW and convert to uW
 P = np.loadtxt(f'Data/{data}.csv', unpack=True, delimiter=',', )
@@ -70,21 +97,22 @@ nx, ny = np.size(P, 0), np.size(P, 1)
 x, y = trn * dpr * np.arange(0, nx), trn * dpr * np.arange(0, ny)
 
 # array of thresholds for power in uW with 500 increments
-th_arr = np.linspace(np.amin(P), np.amax(P), 500)
+Pth_arr = np.linspace(np.amin(P), np.amax(P), 500)
 
 # array to hold SEM for each threshold
-sem_arr = np.zeros(len(th_arr))
+sem_arr = np.zeros(len(Pth_arr))
 
 # loop over all possible thresholds to find one at which SEM is minimum
-for i in range(0, len(th_arr)):
-    P_th = get_treshold(P, th_arr[i])
-    sem_arr[i] = get_sem(P_th)
+if THOPT == True:
+    for i in range(0, len(Pth_arr)):
+        Pth = get_treshold(P, Pth_arr[i])
+        sem_arr[i] = get_sem(Pth)
 
 # optimised threshold doesnt really work for now
-thop = th_arr[np.argmin(sem_arr)]
+Pthop = Pth_arr[np.argmin(sem_arr)]
     
 # get numerical data
-P = get_treshold(P, th)
+P = get_treshold(P, Pth)
 P_avg = get_avg(P)
 P_std = get_std(P)
 P_sem = get_sem(P)
@@ -92,32 +120,18 @@ std_percent = P_std / P_avg * 100
 sem_percent = P_sem / P_avg * 100
 
 # print the numerical results
-file = f'Output/results_{th}.txt'
+file = f'Output/results_{Pth}.txt'
 open(file,'w')
 
-tprint(f'threshold P_th       = {th:.4g} uW')
-tprint(f'mean power P_avg     = {P_avg:.4g} uW')
-tprint(f'std power P_std      = {P_std:.4g} uW')
-tprint(f'SEM power P_sem      = {P_sem:.4g} uW')
-tprint(f'percentage std       = {std_percent:.4g} %')
-tprint(f'percentage SEM       = {sem_percent:.4g} %')
-
-# parameters for plotting SEM against threshold
-plt.figure(1)
-plt.title('Standard Error on the Mean against Threshold')
-plt.xlabel('threshold $P_{th}$ ($\mu W$)')
-plt.ylabel('SEM $\delta_P$ ($\mu W$)')
-plt.rc('grid', linestyle=':', color='black', alpha=0.8)
-plt.grid()
-
-# plot standard error on the mean
-plt.plot(th_arr, sem_arr, color='royalblue')
-
-# save plot
-plt.savefig('Output/threshold.png', dpi=300, bbox_inches='tight')
+tprint(f'powe threshold       = {Pth:.4g} uW')
+tprint(f'mean power           = {P_avg:.4g} uW')
+tprint(f'std power            = {P_std:.4g} uW')
+tprint(f'SEM power            = {P_sem:.4g} uW')
+tprint(f'STD percentage       = {std_percent:.4g} %')
+tprint(f'SEM percentage       = {sem_percent:.4g} %')
 
 # parameters for plotting heat map with optimsied threshold
-plt.figure(2)
+plt.figure(1)
 plt.title('Sensitivity Map of S130VC Detector Area')
 plt.xlabel('horizontal position $x$ (mm)')
 plt.ylabel('vertical position $y$ (mm)')
@@ -130,7 +144,24 @@ plt.pcolormesh(P, cmap='inferno')
 plt.colorbar(label='measured power $P$ ($\mu W$)')
 
 # save plot
-plt.savefig(f'Output/heatmap_{th}.png', dpi=300, bbox_inches='tight')
+plt.savefig(f'Output/heatmap_{Pth}.png', dpi=300, bbox_inches='tight')
+
+# if optimised piower threshold show SEM against threshold
+if THOPT == True:
+    
+    # parameters for plotting SEM against threshold
+    plt.figure(2)
+    plt.title('Standard Error on the Mean against Threshold')
+    plt.xlabel('threshold $P_{th}$ ($\mu W$)')
+    plt.ylabel('SEM $\delta_P$ ($\mu W$)')
+    plt.rc('grid', linestyle=':', color='black', alpha=0.8)
+    plt.grid()
+    
+    # plot standard error on the mean
+    plt.plot(Pth_arr, sem_arr, color='royalblue')
+    
+    # save plot
+    plt.savefig('Output/Pthop.png', dpi=300, bbox_inches='tight')
 
 # show plots
 plt.show()
