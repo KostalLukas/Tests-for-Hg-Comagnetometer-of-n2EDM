@@ -223,7 +223,7 @@ fig4.set_tight_layout(True)
 
 plt.title('Photodiode Degradation over Time', pad=40)
 plt.xlabel('time $t$ (h)')
-plt.ylabel('$P_{DAQ} / P_{power \; meter}$ (unitless)')
+plt.ylabel('$calibration ratio $P / V_{DAQ}$ ($\muW V^{-1}$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 plt.grid()
 
