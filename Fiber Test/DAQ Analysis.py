@@ -15,16 +15,35 @@ import sys
 np.seterr(all="ignore")
 
 
-# function to read arguments from console
-def garg(*args):
-    args = list(args)
-    arg_sys = sys.argv
-    for i in range(1, len(arg_sys)):
-        if type(args[i-1]) == bool:
-            args[i-1] = arg_sys[i] == 'True'
-        else:
-            args[i-1] = type(args[i-1])(arg_sys[i])
-    return args
+# function to pass arguments from console
+def parg(*arg_var):
+    arg_sys = sys.argv[1:]
+    
+    arg_name = []
+    arg_type = []
+    for i in range(0, len(arg_var)):
+        arg_id = id(arg_var[i])
+        
+        for key in globals().keys():
+            if key[0] != '_':
+                val = globals()[key]
+                if id(val) == arg_id:
+                    arg_name.append(key)
+                    arg_type.append(type(val))
+                
+    for i in range(0, len(arg_sys)):
+        for j in range(0, len(arg_var)):
+            if arg_sys[i].split('=')[0] == arg_name[j]:
+                
+                arg_val = arg_sys[i].split('=')[1]
+                
+                if arg_val == 'm':
+                    arg_val = 1/60
+                if arg_val == 'h':
+                    arg_val = 1/3600
+                
+                globals()[arg_name[j]] = arg_type[j](arg_val)
+    return None
 
 
 # function to print to console and file simultaneously
@@ -73,7 +92,7 @@ Rbs_err = 0.037
 fs = 10
 
 # cutoff frequency in Hz
-fc = 'h'
+fc = 1e-3
 
 # minimum threshold for fluctuation in power in uW
 P_th = 100
@@ -91,7 +110,7 @@ l = 10
 data = 'UV_new10m_0802_11_08'
 
 # get input parameters
-data, SPLOT, P_th, LPF, fc = garg(data, SPLOT, P_th, LPF, fc)
+parg(data, SPLOT, P_th, LPF, fc)
 
 # map of DAQ channel voltage ranges in V
 ch_map = np.array([10, 5, 2.5, 1.25])
@@ -114,14 +133,6 @@ n_ch = len(V_arr)
 if n_ch > 2:
     n_ch = 3
     V_arr = V_arr[:3, :]
-
-# set standard cutoff frequencies with 1min or 1h periods
-if LPF == True:
-    if type(fc) == str:
-        if fc == 'm':
-            fc = 1 / 60
-        if fc == 'h':
-            fc = 1 / 3600
             
     # print update on status  
     print('calibrating and applying LPF')
