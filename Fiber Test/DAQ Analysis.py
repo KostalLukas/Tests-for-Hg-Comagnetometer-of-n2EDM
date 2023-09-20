@@ -18,30 +18,30 @@ np.seterr(all="ignore")
 # function to pass arguments from console
 def parg(*arg_var):
     arg_sys = sys.argv[1:]
-    
+
     arg_name = []
     arg_type = []
     for i in range(0, len(arg_var)):
         arg_id = id(arg_var[i])
-        
+
         for key in globals().keys():
             if key[0] != '_':
                 val = globals()[key]
                 if id(val) == arg_id:
                     arg_name.append(key)
                     arg_type.append(type(val))
-                
+
     for i in range(0, len(arg_sys)):
         for j in range(0, len(arg_var)):
             if arg_sys[i].split('=')[0] == arg_name[j]:
-                
+
                 arg_val = arg_sys[i].split('=')[1]
-                
+
                 if arg_val == 'm':
                     arg_val = 1/60
                 if arg_val == 'h':
                     arg_val = 1/3600
-                
+
                 globals()[arg_name[j]] = arg_type[j](arg_val)
     return None
 
@@ -52,7 +52,7 @@ def tprint(text=''):
     global file
     with open(file, 'a') as output:
         print(text, file=output)
-        
+
 
 # function to apply low pass Butterworth filter
 def butter_lp(arr, fs, fc, order):
@@ -66,13 +66,13 @@ def butter_lp(arr, fs, fc, order):
 def set_scales(ax1, ax2):
     y1_min, y1_max = ax1.set_ylim()
     y2_min, y2_max = ax2.set_ylim()
-    
+
     y1_lim = np.maximum(-y1_min, y1_max) * 1.1
     y2_lim = np.maximum(-y2_min, y2_max) * 1.1
-    
+
     ax1.set_ylim(-y1_lim, y1_lim)
     ax2.set_ylim(-y2_lim, y2_lim)
-    
+
     return None
 
 
@@ -95,7 +95,7 @@ fs = 10
 fc = 1e-3
 
 # minimum threshold for fluctuation in power in uW
-P_th = 100
+Pth = 100
 
 # apply a low pass butterworth filter
 LPF = True
@@ -110,7 +110,7 @@ l = 10
 data = 'UV_new10m_0802_11_08'
 
 # get input parameters
-parg(data, SPLOT, P_th, LPF, fc)
+parg(data, SPLOT, Pth, LPF, fc)
 
 # map of DAQ channel voltage ranges in V
 ch_map = np.array([10, 5, 2.5, 1.25])
@@ -133,8 +133,8 @@ n_ch = len(V_arr)
 if n_ch > 2:
     n_ch = 3
     V_arr = V_arr[:3, :]
-            
-    # print update on status  
+
+    # print update on status
     print('calibrating and applying LPF')
 else:
     print('calibratng')
@@ -147,12 +147,12 @@ P_err = np.zeros(V_arr.shape)
 for i in range(0, n_ch):
     # adjust for the DAQ voltage range
     V_arr[i, :] *= ch_map[ch_set[i] - 2]
-    
+
     # calcualte power from DAQ voltage
     P_arr[i, :] = V_arr[i, :] * cal_arr[i]
-    
+
     # apply low pass butterworth filter
-    if LPF == True :   
+    if LPF == True :
         P_arr[i, :] = butter_lp(P_arr[i, :], fs, fc, 1)
     P_err[i, :] = P_arr[i, :] * cal_err[i] / cal_arr[i]
 
@@ -167,12 +167,12 @@ print('removing measurements below threshold')
 # also check if calculated fiber transmission will be below 90%
 P_min = np.minimum(P_arr[0, :], P_arr[1, :])
 fuc = P_arr[1, :] / P_arr[0, :] * Rbs < 0.9
-cond = np.logical_or(P_min > P_th, fuc) 
+cond = np.logical_or(P_min > Pth, fuc) 
 
 # only take measurements if power is over threshold and fiber transmission below 90%
 P_arr = P_arr[:, cond]
 P_err = P_err[:, cond]
-t_nm = t[~cond] 
+t_nm = t[~cond]
 t = t[cond]
 
 # update the no of measurements being analysed and get measurement time in h
@@ -180,7 +180,7 @@ n = len(t)
 th = t / 3600
 
 # print update on status
-print('analysing')   
+print('analysing')
 
 # arrays to hold power fluctuations and associated error in uW
 fP_arr = np.zeros(P_arr.shape)
@@ -194,7 +194,7 @@ dP_err = np.zeros((n_ch, n-1))
 for i in range(0, n_ch):
     fP_arr[i, :] = P_arr[i, :] - P_arr[i, 0]
     fP_err[i, :] = np.sqrt(P_err[i, :]**2 + P_err[i, 0]**2)
-    
+
     dP_arr[i, :] = np.diff(P_arr[i, :]) / np.diff(t)
     for j in range(1, n):
         dP_err[i, j-1] = np.sqrt(P_err[i, j-1]**2 + P_err[i, j]**2)
@@ -218,7 +218,7 @@ A_err = 10 / np.log(10) / R21 * R21_err / l * 1e-3
 if n_ch > 2:
     R23 = P_arr[1, :] / P_arr[2, :]
     R23_err = R23 * np.sqrt((P_err[1, :] / P_arr[1, :])**2 + (P_err[2, :] / P_arr[2, :])**2)
-    
+
     R23 = np.nan_to_num(R21, nan=0, posinf=0, neginf=0)
     R23_err = np.nan_to_num(R21_err, nan=0, posinf=0, neginf=0)
 
@@ -261,7 +261,7 @@ if n_ch > 2:
     R23_avg_err = np.sqrt(np.sum(R23_err**2) / n)
     R23_std = np.std(R23)
     R23_ptp = np.ptp(R23)
-    
+
 # print update on status
 print('printing results')
 print()
@@ -307,7 +307,7 @@ tprint(f'Ch1 range:             {ch_set[0]} => ±{ch_map[ch_set[0]-2]} V')
 tprint(f'Ch2 range:             {ch_set[1]} => ±{ch_map[ch_set[1]-2]} V')
 tprint(f'Ch3 range:             {ch_set[2]} => ±{ch_map[ch_set[2]-2]} V')
 tprint()
-tprint(f'threshold            = {P_th:#.4g} uW')
+tprint(f'threshold            = {Pth:#.4g} uW')
 tprint(f'sampling freq        = {fs:#.4g} Hz')
 tprint(f'low pass filter      = {LPF}')
 tprint(f'cutoff freq          = {fc:#.4g} Hz')
@@ -380,7 +380,7 @@ for i in range(0, n_ch):
 
 plt.legend(handles= ax1.lines + ax2.lines, loc=(-0.1, 1.05), markerscale=20, ncol=3)
 plt.savefig(f'Output/DAQ_{data}_P.png', dpi=300, bbox_inches='tight')
-        
+
 # parameters for plotting power fluctuation
 fig2 = plt.figure(2)
 fig2.set_tight_layout(True)
@@ -426,12 +426,12 @@ ax1.grid()
 for i in range(0, n_ch):
     axs[i].plot(dth, dP_arr[i, :], c=lcolr[i], label=labels[i], linewidth=lw)
     axs[i].fill_between(dth, dP_arr[i, :] - dP_err[i, :], dP_arr[i, :] + dP_err[i, :], \
-                     color=colr[i], alpha=alph)     
+                     color=colr[i], alpha=alph)
 
-set_scales(ax1, ax2)   
+set_scales(ax1, ax2)
 plt.legend(handles= ax1.lines + ax2.lines, loc=(-0.1, 1.05), markerscale=20, ncol=3)
 plt.savefig(f'Output/DAQ_{data}_dPdt.png', dpi=300, bbox_inches='tight')
-        
+
 # parameters for plotting fiber transmission
 fig4 = plt.figure(4)
 fig4.set_tight_layout(True)
