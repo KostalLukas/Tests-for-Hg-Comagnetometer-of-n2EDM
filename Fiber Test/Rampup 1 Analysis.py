@@ -29,9 +29,6 @@ Rbs = 0.51
 # relative error in the powermeter measurement
 err = 0.05
 
-# colors for plotting
-colr = ['royalblue', 'limegreen', 'orange', 'red']
-
 # load the data
 # Fiber_080809_Ru_1.csv dataset contains DAQ voltages and powermeter measurement
 # in uW for every 4 DAQ measurements
@@ -109,6 +106,9 @@ tprint(f'Ch1_ptp = {cal1_ptp:.4g} uW a.u.^-1')
 tprint(f'Ch2_avg = {cal1_avg:.4g} uW a.u.^-1')
 tprint(f'Ch2_err = {cal1_err:.4g} uW a.u.^-1')
 tprint(f'Ch2_ptp = {cal1_ptp:.4g} uW a.u.^-1')
+
+# colors for plotting
+colr = ['royalblue', 'limegreen', 'orange', 'red']
 
 # parameters for plotting input and output power
 plt.figure(1)

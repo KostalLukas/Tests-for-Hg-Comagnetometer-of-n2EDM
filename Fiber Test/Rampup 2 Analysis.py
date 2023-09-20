@@ -20,9 +20,6 @@ def tprint(text=''):
 # relative error in the powermeter measurement
 err = 0.05
 
-# colors for plotting
-colr = ['royalblue', 'limegreen', 'orange', 'red']
-
 # load the data
 # Fiber_080817_Ru_2.csv dataset cotains data from two power rampups
 Vmod, Pfi1, Pfo1, Pfi2, Pfo2 = np.loadtxt('Data/Fiber_080817_Ru_2.csv', unpack=True, delimiter=',', skiprows=1)
@@ -68,6 +65,9 @@ tprint(f'T_avg = {avg2:.4g}')
 tprint(f'T_sem = {sem2:.4g}')
 tprint(f'T_std = {std2:.4g}')
 tprint(f'T_ptp = {ptp2:.4g}')
+
+# colors for plotting
+colr = ['royalblue', 'limegreen', 'orange', 'red']
 
 # parameters for plotting input and output power
 plt.figure(1)
