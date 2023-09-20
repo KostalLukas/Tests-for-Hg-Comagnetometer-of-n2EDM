@@ -8,5 +8,5 @@ D6 - S2281 used on Ch2 in window test
 D7 - S2281 only tested
 D8 - S2281 only tested
 D9 - S2281 only tested
-DS - SiC sensor with diffuser window powered by ±10V
-DT - SiC Tocon with diffuser window powered by ±5V
+DS - SiC sensor with diffuser window input voltage ±10V
+DT - SiC Tocon with diffuser window input voltage ±5V
