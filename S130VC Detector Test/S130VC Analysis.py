@@ -11,23 +11,34 @@ from matplotlib import pyplot as plt
 import sys
 
 
-# function to pass arguments from terminal
-def parg(arg_var):
-    arg_sys = sys.argv
+# function to pass arguments from console
+def parg(*arg_var):
+    arg_sys = sys.argv[1:]
     
-    for i in range(1, len(arg_sys)):
-        arg_nam = arg_sys[i].split('=')[0]
-        arg_val = arg_sys[i].split('=')[1]
+    arg_name = []
+    arg_type = []
+    for i in range(0, len(arg_var)):
+        arg_id = id(arg_var[i])
         
-        if arg_val == 'm':
-            arg_val = 1/60
-        if arg_val == 'h':
-            arg_val = 1/3600
-        
-        if arg_nam in arg_var:
-            exec(f'{arg_nam} = {arg_val}', globals())
-        else:
-            print(f'{arg_nam} is not a valid variable')
+        for key in globals().keys():
+            if key[0] != '_':
+                val = globals()[key]
+                if id(val) == arg_id:
+                    arg_name.append(key)
+                    arg_type.append(type(val))
+                
+    for i in range(0, len(arg_sys)):
+        for j in range(0, len(arg_var)):
+            if arg_sys[i].split('=')[0] == arg_name[j]:
+                
+                arg_val = arg_sys[i].split('=')[1]
+                
+                if arg_val == 'm':
+                    arg_val = 1/60
+                if arg_val == 'h':
+                    arg_val = 1/3600
+                
+                globals()[arg_name[j]] = arg_type[j](arg_val)
     return None
 
 
@@ -42,10 +53,6 @@ def tprint(text=''):
 # function to apply threshold
 def get_treshold(P, Pth):
     P = np.array(P)
-    
-    print(P) 
-    print()
-    print(Pth)
     
     for i in range(0, nx):
         for j in range(0, ny):
@@ -88,7 +95,7 @@ dpr = 0.5
 # doesnt work well so default is off
 THOPT = True
 
-parg('Pth')
+parg(Pth)
 
 # load data in mW and convert to uW
 P = np.loadtxt(f'Data/{data}.csv', unpack=True, delimiter=',', )
