@@ -1,0 +1,34 @@
+dataset:               Window_082410_W1
+
+total time            = 22.339 h
+
+Pin mean              = 85.64 ± 8.525 uW
+Pin ptp               = 92.56 uW
+Pin RMS dP/dt         = 54.72 ± 5.992 uWs^-1
+
+Pout mean             = 219.9 ± 15.58 uW
+Pout ptp              = 236.7 uW
+Pout RMS dP/dt        = 48.13 ± 0.01738 uWs^-1
+
+Ch3 mean power        = 5.423e+04 ± 2707. uW
+Ch3 ptp power         = 5.868e+04 uW
+Ch3 RMS dP/dt         = 1.170e+04 ± 3.025 uWs^-1
+
+mean transmission     = 0.8816 ± 0.1221
+ptp transmission      = 5.473 (547.3 %)
+
+mean ratio R23        = 0.004054 ± 0.004054
+ptp ratio R23         = 0.02215 (2.2 %)
+
+Ch1 cal               = 261.3 ± 18.5 uWV^-1
+Ch2 cal               = 353.0 ± 25.0 uWV^-1
+Ch3 cal               = 286600.0 ± 14300.0 uWV^-1
+
+Ch1 range:              5 => ±1.25 V
+Ch2 range:              5 => ±1.25 V
+Ch3 range:              5 => ±1.25 V
+
+sampling freq         = 10.00 Hz
+low pass filter       = False
+cutoff freq           = 10.00 Hz
+beamsplitter ratio    = 0.586 ± 0.041

@@ -2,33 +2,33 @@ dataset:               Window_082318_W2
 
 total time            = 15.501 h
 
-Pin mean              = 77.29 ± 77.29 uW
-Pin ptp               = 4.642 uW
-Pin RMS dP/dt         = 0.02835 ± 70.14 uWs^-1
+Pin mean              = 83.47 ± 8.313 uW
+Pin ptp               = 91.21 uW
+Pin RMS dP/dt         = 35.95 ± 5.847 uWs^-1
 
-Pout mean             = 225.2 ± 11.24 uW
-Pout ptp              = 13.96 uW
-Pout RMS dP/dt        = 0.02287 ± 0.02074 uWs^-1
+Pout mean             = 221.6 ± 15.69 uW
+Pout ptp              = 242.4 uW
+Pout RMS dP/dt        = 31.13 ± 0.02150 uWs^-1
 
-Ch3 mean power       = 5.494e+04 ± 2741 uW
-Ch3 ptp power        = 3351 uW
-Ch3 RMS dP/dt        = 5.461 ± 5.047 uWs^-1
+Ch3 mean power        = 5.494e+04 ± 2741. uW
+Ch3 ptp power         = 5.903e+04 uW
+Ch3 RMS dP/dt         = 7462. ± 3.729 uWs^-1
 
-mean transmission     = 0.805 ± 0.09974
-ptp transmission      = 0.01479 (1.5 %)
+mean transmission     = 0.8655 ± 0.1222
+ptp transmission      = 2.057 (205.7 %)
 
-mean ratio R23        = 0.004098 ± 0.004098
-ptp ratio R23         = 7.047e-05 (0.0 %)
+mean ratio R23        = 0.004033 ± 0.004033
+ptp ratio R23         = 0.006694 (0.7 %)
 
-Ch1 cal               = 262.5 ± 13.1 uWV^-1
-Ch2 cal               = 358.7 ± 17.9 uWV^-1
+Ch1 cal               = 261.3 ± 18.5 uWV^-1
+Ch2 cal               = 353.0 ± 25.0 uWV^-1
 Ch3 cal               = 286600.0 ± 14300.0 uWV^-1
 
 Ch1 range:              5 => ±1.25 V
 Ch2 range:              5 => ±1.25 V
 Ch3 range:              5 => ±1.25 V
 
-sampling freq         = 10 Hz
-low pass filter       = True
-cutoff freq           = 0.01667 Hz
-beamsplitter ratio    = 0.525 ± 0.037
+sampling freq         = 10.00 Hz
+low pass filter       = False
+cutoff freq           = 10.00 Hz
+beamsplitter ratio    = 0.571 ± 0.04
