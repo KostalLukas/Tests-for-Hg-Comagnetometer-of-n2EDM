@@ -7,7 +7,7 @@
 - The Data subdrectory contains all of the datasets collected for the particular investigation.
 - Data collected using the DAQ system is saved as .txt while data collected manually is saved as .csv
 - Large data files have been individually compressed into .xz files
-- Different types of tests are specified with a 2 letters as follows:
+- Different types of tests are specified with by 2 letters keys as follows:
   Ls - long term stability, St - short test, Ru - power rampup, Rd - power rampdown, Sr - step response
 - The Output directory contains an example output generated the Python analysis scipts
 - Numerical results are saved as .txt or sometimes .csv files and the plots ae simply saved as .png
@@ -16,10 +16,11 @@
 - Window Test
   - UV window comparison
     - analysis script is Window Comparison Analysis.py
-    - Windows are numbered 1-9 as showin in UV-windows.csv
-    - beamsplitter ratios measured for each window test saved as Window_Rbs.csv
+    - Windows are numbered 1-9 as showin in UV\_windows.csv
+    - beamsplitter ratios measured for each dataset are saved as Window_Rbs.csv
     - the analysis script takes the first 9 datasets specified in Window_Rbs.csv and compares their
       trnamsission correcting for the drift in beamsplitter ratio
+    - dataset for W7 had to be corrected for a jump in transmission and is denoted with Cr at the end
   - UV window transmission
     - analysis script is Window Analysis.py
     - data is saved as Window\_(timestamp)\_W(window no)\_(optional type of test).txt
@@ -40,7 +41,7 @@
     - Data is saved as Diode\_(timestamp)\_D(Ch1 diode no)\_D(Ch2 diode no)\_(type of test).txt
     - Timestamp has the format mmddhh and denotes the start of data taking
     - The analysis script automatically recognizes the photodiode number and loads the calibration and associated error
-          from the oputput of Diode Comparison Analysis.py accounting for the different gains on Ch1 and Ch2
+      from the oputput of Diode Comparison Analysis.py accounting for the different gains on Ch1 and Ch2
 
 - Fiber Test
   - Fiber exposure time
