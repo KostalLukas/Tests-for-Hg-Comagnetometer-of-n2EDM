@@ -15,16 +15,35 @@ import sys
 np.seterr(all="ignore")
 
 
-# function to read arguments from console
-def garg(*args):
-    args = list(args)
-    arg_sys = sys.argv
-    for i in range(1, len(arg_sys)):
-        if type(args[i-1]) == bool:
-            args[i-1] = arg_sys[i] == 'True'
-        else:
-            args[i-1] = type(args[i-1])(arg_sys[i])
-    return args
+# function to pass arguments from console
+def parg(*arg_var):
+    arg_sys = sys.argv[1:]
+    
+    arg_name = []
+    arg_type = []
+    for i in range(0, len(arg_var)):
+        arg_id = id(arg_var[i])
+        
+        for key in globals().keys():
+            if key[0] != '_':
+                val = globals()[key]
+                if id(val) == arg_id:
+                    arg_name.append(key)
+                    arg_type.append(type(val))
+                
+    for i in range(0, len(arg_sys)):
+        for j in range(0, len(arg_var)):
+            if arg_sys[i].split('=')[0] == arg_name[j]:
+                
+                arg_val = arg_sys[i].split('=')[1]
+                
+                if arg_val == 'm':
+                    arg_val = 1/60
+                if arg_val == 'h':
+                    arg_val = 1/3600
+                
+                globals()[arg_name[j]] = arg_type[j](arg_val)
+    return None
 
 
 # function to print to console and file simultaneously
@@ -53,7 +72,7 @@ err = 0.05
 sens = 200
 
 # specify or input filename of data to be analyzed
-data, Pset, Iact, Vmac, Vmin = garg(data, Pset, Iact, Vmax, Vmin)
+parg(data, Pset, Iact, Vmax, Vmin)
 
 # specify colors for plotting
 colr = ['royalblue', 'green', 'orange', 'red']
