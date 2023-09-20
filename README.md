@@ -31,7 +31,7 @@
   - Diode comparison
     - Analysis script is Diode Comparison Analysis.py
     - Data is saved as Diode\_D(diode no).txt
-    - Diodes are numbered 1-8 as shown in UV\_diodes.txt
+    - 8 Hamamatsu S2281 photodiodes numbered D1-D8 as shown in UV\_diodes.txt
     - Analysis script compares the sensitivity and stability of the photodiodes measured directly at the output of the
       lser without power stabilisation
     - This generates the calibration for each photodiode with the gain of Ch1 on the DAQ
@@ -69,18 +69,17 @@
 
 - Power Stabilisation
   - TA Modulation curves
-    - Analysis scipt is Stabilisation Analysis
+    - Analysis scipt is Stabilisation Analysis.py
     - Data is Modulation\_IP.csv and Modulation\_VIP.csv
     - For IP data the TA current Iact is varied manually and recorded while for VIP the TA modulation vltage Vmod is varied
       and both Vmod and Iact are measured in both cases the output power is also measured using the PM
-    - For the VIP data the analysis script can take values characterising the current power stabilisation setup and use the PIact curve
+    - For the VIP data the analysis script can take values characterising the current power stabilisation setup and use the PI curve
       to calcualte parameters for a desired output power
 
 - S130VC Detector Test
   - Sensitivity map
     - Analysis script is S130VC Analysis.py
-    - Data is Sensitivity\_map.csv and is a grid of power measured using the Thorlabs S130VC photodode detector with increments of 5 turns on
-      a linear translation stage which can be calibrated using the size of the detector window
+    - Data is Sensitivity\_map.csv and is a grid of power measured using the Thorlabs S130VC photodode detector with increments of 1mm
     - The analysis script plots a heat map characterising the sensitivity across the photodiode active area as well as a standard devaition
       which can be used as the absolute error for all PM measureaments
 
