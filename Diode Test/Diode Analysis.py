@@ -16,16 +16,35 @@ import sys
 np.seterr(all="ignore")
 
 
-# function to read arguments from console
-def garg(*args):
-    args = list(args)
-    arg_sys = sys.argv
-    for i in range(1, len(arg_sys)):
-        if type(args[i-1]) == bool:
-            args[i-1] = arg_sys[i] == 'True'
-        else:
-            args[i-1] = type(args[i-1])(arg_sys[i])
-    return args
+# function to pass arguments from terminal
+def parg(*arg_var):
+    arg_sys = sys.argv[1:]
+    
+    arg_name = []
+    arg_type = []
+    for i in range(0, len(arg_var)):
+        arg_id = id(arg_var[i])
+        
+        for key in globals().keys():
+            if key[0] != '_':
+                val = globals()[key]
+                if id(val) == arg_id:
+                    arg_name.append(key)
+                    arg_type.append(type(val))
+                
+    for i in range(0, len(arg_sys)):
+        for j in range(0, len(arg_var)):
+            if arg_sys[i].split('=')[0] == arg_name[j]:
+                
+                arg_val = arg_sys[i].split('=')[1]
+                
+                if arg_val == 'm':
+                    arg_val = 1/60
+                if arg_val == 'h':
+                    arg_val = 1/3600
+                
+                globals()[arg_name[j]] = arg_type[j](arg_val)
+    return None
 
 
 # function to print to console and file simultaneously
@@ -92,7 +111,7 @@ data = 'Diode_090118_D4_D6_Ls'
 Rg = 1.332
 
 # get input parameters
-data, ACAL, SPLOT, LPF, fc, FFT= garg(data, ACAL, SPLOT, LPF, fc, FFT)
+parg(data, ACAL, SPLOT, LPF, fc, FFT)
 
 # map of DAQ channel voltage ranges in V
 ch_map = np.array([10, 5, 2.5, 1.25])
@@ -306,10 +325,14 @@ tprint(f'FFT Analysis         = {FFT}')
 print()
 print('plotting')
 
+# array of times for plotting time derivatives
+dth = th[1:]
+
 # if subsampling turned on subsample all of the original arrays
 if SPLOT == True:
     sval = int(n / 1000)
     th = th[::sval]
+    dth = dth[::sval]
     P_arr = P_arr[:, ::sval]
     P_err = P_err[:, ::sval]
     fP_arr = fP_arr[:, ::sval]
@@ -407,8 +430,8 @@ plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 ax1.grid()
 
 for i in range(0, 3):
-    axs[i].plot(th, dP_arr[i, :], c=lcolr[i], label=labels[i], linewidth=lw)
-    axs[i].fill_between(th, dP_arr[i, :] - dP_err[i, :], dP_arr[i, :] + dP_err[i, :], \
+    axs[i].plot(dth, dP_arr[i, :], c=lcolr[i], label=labels[i], linewidth=lw)
+    axs[i].fill_between(dth, dP_arr[i, :] - dP_err[i, :], dP_arr[i, :] + dP_err[i, :], \
                      color=colr[i], alpha=alph)     
 
 set_scales(ax1, ax2)   
@@ -460,12 +483,12 @@ ax2.set_ylabel('rate of change of $R_{23}$ ($s^{-1}$)')
 plt.rc('grid', linestyle=':', c='black', alpha=0.8)
 ax1.grid()
 
-ax1.plot(th, dR21, c=lcolr[0], label='ratio $R_{21}$')
-ax1.fill_between(th, dR21 - dR21_err, dR21 + dR21_err, color=colr[0], \
+ax1.plot(dth, dR21, c=lcolr[0], label='ratio $R_{21}$')
+ax1.fill_between(dth, dR21 - dR21_err, dR21 + dR21_err, color=colr[0], \
                  alpha=alph, linewidth=lw)
 
-ax2.plot(th, dR23, c=lcolr[1], label='ratio $R_{23}$')
-ax2.fill_between(th, dR23 - dR23_err, dR23 + dR23_err, color=colr[1], \
+ax2.plot(dth, dR23, c=lcolr[1], label='ratio $R_{23}$')
+ax2.fill_between(dth, dR23 - dR23_err, dR23 + dR23_err, color=colr[1], \
                  alpha=alph, linewidth=lw)
     
 set_scales(ax1, ax2)  
