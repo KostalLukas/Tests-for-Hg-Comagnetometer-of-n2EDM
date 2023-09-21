@@ -128,11 +128,11 @@ for file in *;
   - `fc` - float or str - cutoff frequency in Hz of the low pass Butterworth filter
   - `Pth` - float - threshd power in uW if either Ch1 or Ch2 power of measurement is below it is ignored
   - `P` - float - laser output power in uW at which data for the diode comparison was measured
-  - `n_ivf` -
-  - `th_ivf` -
-  - `dt_th` - 
+  - `th_ivf` - float - time in h over which to calcualte the change in window transmission
+  - `n_ivf` - int - no of measurements to average for calculating change in window transmission
+  - `dt_th` - float - threshold for time difference in h beyond which elapsed time is accounted for in exposure time
 
-- Arguments can be assigned in any order in the form `{Parameter}={Value}` separated by a single space
+- Arguments can be assigned in any order in the form `(Parameter)=(Value)` separated by a single space
 - For boolean arguments use 'True' or 'False' for fc use a value or 'm' for fc=1/1min or 'h' for fc=1/1h
 - If no arguments are passed the scrypt defaults to preset arguments sepcified inside the script
 
