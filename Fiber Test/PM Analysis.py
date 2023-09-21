@@ -199,7 +199,6 @@ plt.errorbar(t, R, yerr=R_err, fmt='.', capsize=4, c=colr[0])
 
 # save plot
 plt.savefig('Output/PM_beamsplitter.png', dpi=300, bbox_inches='tight')
-plt.show()
 
 # parameters for plotting total laser output power
 fig3 = plt.figure(3)
