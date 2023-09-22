@@ -8,7 +8,7 @@ Lukas Kostal, 13.9.2023, PSI
 
 import numpy as np
 from matplotlib import pyplot as plt
-import pandas as pd 
+import pandas as pd
 import scipy.signal as ss
 import sys
 
@@ -20,30 +20,33 @@ np.seterr(all="ignore")
 # function to pass arguments from terminal
 def parg(*arg_var):
     arg_sys = sys.argv[1:]
-    
+
     arg_name = []
     arg_type = []
     for i in range(0, len(arg_var)):
         arg_id = id(arg_var[i])
-        
+
         for key in globals().keys():
-            if key[0] != '_':
+            if not(key in arg_name or key[0] == '_'):
                 val = globals()[key]
                 if id(val) == arg_id:
                     arg_name.append(key)
                     arg_type.append(type(val))
-                
+
     for i in range(0, len(arg_sys)):
-        for j in range(0, len(arg_var)):
+        for j in range(0, len(arg_name)):
             if arg_sys[i].split('=')[0] == arg_name[j]:
-                
+
                 arg_val = arg_sys[i].split('=')[1]
-                
+
                 if arg_val == 'm':
                     arg_val = 1/60
                 if arg_val == 'h':
                     arg_val = 1/3600
-                
+
+                if arg_type[j] == bool:
+                    arg_val = arg_val == 'True'
+                 
                 globals()[arg_name[j]] = arg_type[j](arg_val)
     return None
 
@@ -88,7 +91,7 @@ ARBS = True
 fs = 10
 
 # cutoff frequency in Hz
-fc = 'm'
+fc = 1e-2
 
 # apply a low pass butterworth filter
 LPF = True
@@ -133,20 +136,11 @@ n = len(V_arr[0, :])
 t = np.arange(0, n) / fs
 th = t / 3600
 
-# set standard cutoff frequencies with 1min or 1h periods
+# print update on status
 if LPF == True:
-    if type(fc) == str:
-        if fc == 'm':
-            fc = 1 / 60
-        if fc == 'h':
-            fc = 1 / 3600
-
-    # print update on status
     print('calibrating and applying LPF')
 else:
-    fc = fs
-
-    print('calibratng')
+    print('calibrating')
 
 # arrays to hold measured power and absolute error in uW
 P_arr = np.zeros(V_arr.shape)
@@ -164,17 +158,17 @@ for i in range(0, 3):
     if LPF == True :
         P_arr[i, :] = butter_lp(P_arr[i, :], fs, fc, 1)
     P_err[i, :] = P_arr[i, :] * cal_err[i] / cal_arr[i]
-    
-if ARBS = True:
+
+if ARBS == True:
     # load the file with beam splitter ratios for the window tests as pandas dataframe
-    df = pd.read_csv('Data/Window_Rbs.csv')    
-    
+    df = pd.read_csv('Data/Window_Rbs.csv')
+
     # slice the dataframe and convert to arrays
     Rbs_data = np.array(df.iloc[:, 0], dtype=str)
     Rbs_arr = np.array(df.iloc[:, 1], dtype=float)
     Rbs_err_arr = np.array(df.iloc[:, 2], dtype=float)
-    
-    for i in range(0, len(ds)):
+
+    for i in range(0, len(df)):
         if Rbs_data[i] == data:
             Rbs = Rbs_arr[i]
             Rbs_err = Rbs_err_arr[i]
@@ -309,10 +303,11 @@ tprint(f'Ch1 range:              {ch_set[0]} => ±{ch_map[ch_set[0]-2]} V')
 tprint(f'Ch2 range:              {ch_set[1]} => ±{ch_map[ch_set[1]-2]} V')
 tprint(f'Ch3 range:              {ch_set[2]} => ±{ch_map[ch_set[2]-2]} V')
 tprint()
+tprint(f'beamsplitter ratio    = {Rbs} ± {Rbs_err}')
 tprint(f'sampling freq         = {fs:#.4g} Hz')
 tprint(f'low pass filter       = {LPF}')
-tprint(f'cutoff freq           = {fc:#.4g} Hz')
-tprint(f'beamsplitter ratio    = {Rbs} ± {Rbs_err}')
+if LPF == True:
+    tprint(f'cutoff freq           = {fc:#.4g} Hz')
 
 # print update on status
 print()
