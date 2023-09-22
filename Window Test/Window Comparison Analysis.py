@@ -19,30 +19,33 @@ np.seterr(all="ignore")
 # function to pass arguments from terminal
 def parg(*arg_var):
     arg_sys = sys.argv[1:]
-    
+
     arg_name = []
     arg_type = []
     for i in range(0, len(arg_var)):
         arg_id = id(arg_var[i])
-        
+
         for key in globals().keys():
-            if key[0] != '_':
+            if not(key in arg_name or key[0] == '_'):
                 val = globals()[key]
                 if id(val) == arg_id:
                     arg_name.append(key)
                     arg_type.append(type(val))
-                
+
     for i in range(0, len(arg_sys)):
-        for j in range(0, len(arg_var)):
+        for j in range(0, len(arg_name)):
             if arg_sys[i].split('=')[0] == arg_name[j]:
-                
+
                 arg_val = arg_sys[i].split('=')[1]
-                
+
                 if arg_val == 'm':
                     arg_val = 1/60
                 if arg_val == 'h':
                     arg_val = 1/3600
-                
+
+                if arg_type[j] == bool:
+                    arg_val = arg_val == 'True'
+                 
                 globals()[arg_name[j]] = arg_type[j](arg_val)
     return None
 
