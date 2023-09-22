@@ -5,6 +5,7 @@ Diode Test Analysis v3.0
 Lukas Kostal, 6.9.2023, PSI
 """
 
+
 import numpy as np
 from matplotlib import pyplot as plt
 import scipy.signal as ss
@@ -19,30 +20,33 @@ np.seterr(all="ignore")
 # function to pass arguments from terminal
 def parg(*arg_var):
     arg_sys = sys.argv[1:]
-    
+
     arg_name = []
     arg_type = []
     for i in range(0, len(arg_var)):
         arg_id = id(arg_var[i])
-        
+
         for key in globals().keys():
-            if key[0] != '_':
+            if not(key in arg_name or key[0] == '_'):
                 val = globals()[key]
                 if id(val) == arg_id:
                     arg_name.append(key)
                     arg_type.append(type(val))
-                
+
     for i in range(0, len(arg_sys)):
-        for j in range(0, len(arg_var)):
+        for j in range(0, len(arg_name)):
             if arg_sys[i].split('=')[0] == arg_name[j]:
-                
+
                 arg_val = arg_sys[i].split('=')[1]
-                
+
                 if arg_val == 'm':
                     arg_val = 1/60
                 if arg_val == 'h':
                     arg_val = 1/3600
-                
+
+                if arg_type[j] == bool:
+                    arg_val = arg_val == 'True'
+                 
                 globals()[arg_name[j]] = arg_type[j](arg_val)
     return None
 
@@ -93,7 +97,7 @@ cal_err = np.array([0, 0, 14300])
 fs = 10
 
 # cutoff frequency in Hz
-fc = 'm'
+fc = 1e-2
 
 # apply a low pass butterworth filter
 LPF = True
@@ -137,22 +141,11 @@ n = len(V_arr[0, :])
 t = np.arange(0, n) / fs
 th = t / 3600
 
-# set standard cutoff frequencies with 1min or 1h periods
+# print update on status
 if LPF == True:
-    if type(fc) == str:
-        if fc == 'm':
-            fc = 1 / 60
-        if fc == 'h':
-            fc = 1 / 3600
-    else:
-        fc = float(fc)
-            
-    # print update on status  
     print('calibrating and applying LPF')
 else:
-    fc = fs
-    
-    print('calibratng')
+    print('calibrating')
 
 # load the calibration constants
 if ACAL == True:
