@@ -136,5 +136,5 @@ for file in *;
 - For boolean arguments use 'True' or 'False' for fc use a value or 'm' for fc=1/1min or 'h' for fc=1/1h
 - If no arguments are passed the scrypt defaults to preset arguments sepcified inside the script
 
-Last updated: 20.09.2023
+Last updated: 22.09.2023
 By Lukas Kostal
